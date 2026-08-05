@@ -1,0 +1,193 @@
+/* Deck theme on REN design tokens (@ren-no/design-system):
+   IBM Plex Sans/Mono, pine-green ink on white, bright-green brand accents.
+   Layout ported from the original reveal.js deck. */
+
+@import '@ren-no/design-system/tokens.css';
+
+.slidev-layout {
+  background: var(--color-background-default);
+  color: var(--color-text-primary);
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+  padding: 2.5rem 4.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+.slidev-layout h1,
+.slidev-layout h2,
+.slidev-layout h3 {
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+  font-weight: var(--font-weight-heading);
+  line-height: 1.15;
+}
+
+.slidev-layout h1 { font-size: 3.6rem; }
+.slidev-layout h2 { font-size: 2.5rem; margin-bottom: 1.2rem; }
+
+.slidev-layout p,
+.slidev-layout li {
+  font-size: 1.35rem;
+  line-height: 1.55;
+}
+.slidev-layout p { margin: 0.5rem 0; }
+.slidev-layout ul { margin-left: 0.6em; }
+.slidev-layout li { margin-bottom: 0.45em; }
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--color-brand-text-primary);
+  margin-bottom: 1.6rem;
+}
+
+.muted { color: var(--color-text-secondary); }
+.green { color: var(--color-brand-text-primary); }
+.blue  { color: var(--color-blue-700); }
+/* Colored headings: outrank the .slidev-layout h3 ink color above */
+.slidev-layout h3.green { color: var(--color-brand-text-primary); }
+.slidev-layout h3.blue  { color: var(--color-blue-700); }
+.slidev-layout .small { font-size: 0.95rem; }
+.byline { margin-top: 3rem; font-size: 1.1rem; }
+
+/* No ligatures: the talk is about ->, |>, => as literal character sequences */
+.slidev-layout code,
+.slidev-layout pre {
+  font-feature-settings: "calt" 0, "liga" 0;
+}
+
+/* Code blocks: deep pine panel on the white background
+   (--color-background-darkest = green-800, REN's dark surface token) */
+.slidev-layout pre.slidev-code,
+.slidev-layout .slidev-code {
+  background: var(--color-background-darkest) !important;
+  border-radius: var(--border-radius-lg);
+  padding: 0.9em 1.1em !important;
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+}
+
+/* Inline code as a light chip */
+.slidev-layout :not(pre) > code {
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+  background: var(--color-grey-100);
+  color: var(--color-text-primary);
+  border-radius: var(--border-radius-default);
+  padding: 0.05em 0.3em;
+  font-size: 0.92em;
+}
+
+.cols { display: flex; gap: 1.5rem; align-items: stretch; }
+.cols > div { flex: 1; min-width: 0; }
+
+/* Two traditions: centered columns under the family tree — the tree names
+   the traditions; each column is colored key phrase > muted detail > motto */
+.traditions { text-align: center; margin-top: 0.3rem; }
+.slidev-layout .traditions h3 { font-size: 1.4rem; margin-bottom: 0.3rem; }
+.slidev-layout .traditions .detail {
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+.slidev-layout .traditions .motto {
+  font-size: 1.05rem;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+/* Backdrop column (the imperative branch): whole block one step
+   quieter than .muted, matching the gray tree above it */
+.slidev-layout .traditions .dim h3,
+.slidev-layout .traditions .dim .detail,
+.slidev-layout .traditions .dim .motto { color: var(--color-grey-600); }
+
+/* Statement pairs ("Two superpowers"): quiet mono label, colored phrase, muted note */
+.power-label {
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.4rem;
+}
+.slidev-layout .power {
+  font-size: 1.9rem;
+  font-weight: var(--font-weight-heading);
+  line-height: 1.2;
+  margin: 0.1em 0 0.3em;
+}
+.slidev-layout .power + p.muted { font-size: 1.05rem; }
+
+.slidev-layout .quote {
+  font-weight: var(--font-weight-light);
+  font-size: 1.9rem;
+  line-height: 1.5;
+  max-width: 22em;
+}
+.quote .attribution {
+  display: block;
+  font-size: 1rem;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+  margin-top: 1.6rem;
+}
+
+.switch {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+  font-size: 0.95rem;
+  color: var(--button-color-text-primary-default);
+  background: var(--button-color-background-primary-default);
+  border-radius: var(--border-radius-lg);
+  padding: 0.5em 1em;
+  margin-top: 1.8rem;
+}
+
+/* Signature: dim parens framing the title + parking slides (class: parens) */
+.slidev-layout.parens {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+}
+.slidev-layout.parens::before,
+.slidev-layout.parens::after {
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+  font-weight: var(--font-weight-light);
+  font-size: 24rem;
+  color: var(--color-green-100);
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  z-index: -1;
+  line-height: 1;
+}
+.slidev-layout.parens::before { content: "("; left: -0.18em; }
+.slidev-layout.parens::after  { content: ")"; right: -0.18em; }
+
+.slidev-layout svg text {
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+}
+
+/* Footer, rendered by global-top.vue: REN logo left, slide number right.
+   pointer-events off so the overlay never swallows clicks. */
+.deck-footer-logo {
+  position: absolute;
+  left: 1.1rem;
+  bottom: 0.8rem;
+  height: 1.2rem;
+  width: auto;
+  pointer-events: none;
+}
+.deck-slide-number {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.75rem;
+  pointer-events: none;
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}

@@ -1,0 +1,20 @@
+{
+  "name": "clojure-presentation-slides",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build",
+    "export": "slidev export --per-slide"
+  },
+  "devDependencies": {
+    "@slidev/cli": "^52.19.0",
+    "@slidev/theme-default": "^0.25.0",
+    "@slidev/types": "^52.19.0",
+    "playwright-chromium": "^1.62.1",
+    "vue": "^3.5.40"
+  },
+  "dependencies": {
+    "@ren-no/design-system": "^3.21.1"
+  }
+}

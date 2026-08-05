@@ -1,0 +1,16 @@
+# Clojure
+.cpcache/
+.nrepl-port
+target/
+.lsp/.cache/
+.clj-kondo/.cache/
+
+# JS / Slidev
+node_modules/
+dist/
+
+# Editors & OS
+*.swp
+*.swo
+*~
+.DS_Store
