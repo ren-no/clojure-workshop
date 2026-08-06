@@ -121,6 +121,9 @@
   margin: 0.1em 0 0.3em;
 }
 .slidev-layout .power + p.muted { font-size: 1.05rem; }
+/* Backdrop tier ("The industry agrees"): places-by-default languages,
+   one step quieter — same grey as the dim tradition column */
+.slidev-layout .power.dim { color: var(--color-grey-600); }
 
 .slidev-layout .quote {
   font-weight: var(--font-weight-light);

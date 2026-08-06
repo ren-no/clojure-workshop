@@ -18,10 +18,10 @@ class: parens
 
 # Clojure
 
-<p class="muted">
-Value-oriented functional programming with Lisp.<br>
-An intro for Javaists · F#-ists · TypeScripters
+<p>
+Value-oriented functional programming with Lisp on the JVM.
 </p>
+
 
 <!--
 No agenda slide — the hook is the agenda. Tone: exploration, not evangelism. One line of framing, then straight to slide 2.
@@ -142,7 +142,7 @@ JS (if someone objects — slide 2 was JS): the gray row sorts by default semant
 <p class="muted">A Lisp at heart — revised with lessons from the other side.</p>
 
 <!--
-The segue slide — and it defuses tribal readings: Clojure is not "team dynamic vs team static", it's a synthesis with a strong opinion about values. The next three slides are the receipts: immutability, the borrowed research, the JVM.
+The segue slide — and it defuses tribal readings: Clojure is not "team dynamic vs team static", it's a synthesis with a strong opinion about values. The next three slides are the receipts: immutability, the borrowed research, hosting as a principle.
 -->
 
 ---
@@ -174,12 +174,13 @@ Beat 2: laziness where it helps. Sequences can be infinite, production separated
 
 <div class="eyebrow">ORIENTATION · A REVISIONIST LISP</div>
 
-## Hosted on the JVM
+## Hosted, <span class="green">by design</span>
 
-<p class="muted">Your libraries, your ops, your profilers.</p>
+<p class="muted">No private island: Clojure targets the JVM · ClojureScript, JavaScript · ClojureCLR, .NET.<br>
+Host types are Clojure’s types — interop is a language feature, not an FFI.</p>
 
 <!--
-Beat 3: pragmatism. Closes the revisionist sequence opened by the "learned from both traditions" segue.
+Beat 3: pragmatism as a design decision. Hickey's rationale: a new language island forfeits decades of libraries, GC and JIT work — hosting inherits them on day one. Strings ARE java.lang.String / JS strings; no marshalling layer. The triple lands per audience: JVM for the Javaists, JS for the TypeScripters, CLR for the F# crowd. Keep it at the principle here — the practical "keep your profilers, deploy a jar, npm" payoff belongs to the adoption slide near the end.
 -->
 
 ---
@@ -229,14 +230,20 @@ Hickey core: "The Value of Values". Say the arc verbally: a place = a memory add
 
 ## Value-oriented programming
 
-<p class="muted">A value is a fact at a point in time.<br>
-Change doesn’t overwrite facts — it adds new ones.<br>
-Values account for <em>time</em>; places erase it.</p>
+<p class="muted">a fact at a point in time<br>
+accrete don't overwrite<br>
+</p>
 
-<p style="margin-top:1.4em;">You already trust this: <span class="green">ledgers, medical journals, git</span>.</p>
+<p>
+Values account for <em>time</em>; places erase it.
+</p>
+
+<p style="margin-top:1.4em;">You already trust this: <span class="green">ledgers, medical journals, git</span>.<br>
+Your ints and strings already work this way.<br>
+<span class="green">In Clojure, everything does.</span></p>
 
 <!--
-"The Value of Values" in one slide. A value is immutable, semantically transparent, freely shareable, comparable. The TIME argument is the core: a place holds only the latest write — history is gone; with values, old and new coexist, so time becomes explicit in the program. Hickey's line: "accountants don't use erasers" — double-entry ledgers, medical journals, git commits are value-oriented systems everyone already trusts. The next slides make it concrete: equality, updates, structural sharing.
+"The Value of Values" in one slide. A value is immutable, semantically transparent, freely shareable, comparable. The TIME argument is the core: a place holds only the latest write — history is gone; with values, old and new coexist, so time becomes explicit in the program. Hickey's line: "accountants don't use erasers" — double-entry ledgers, medical journals, git commits are value-oriented systems everyone already trusts. Second hook: the room already programs with values daily — nobody defensively copies an int, nobody fears their 42 becoming 43 behind their back or a string mutating mid-print (java.util.Date is the exception that proves the rule). Clojure's move isn't exotic: it just extends the scalar guarantee to collections. The next slides make it concrete: equality, updates, structural sharing.
 -->
 
 ---
@@ -388,47 +395,66 @@ Callback to the hook (slides 2–3) — close the loop explicitly. Free · Fearl
 <div class="cols">
 <div>
 
-<svg viewBox="0 0 420 250" style="width:100%;">
+<svg viewBox="0 0 460 260" style="width:100%;">
+  <defs>
+    <marker id="share-arrow" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#017E5B"/>
+    </marker>
+  </defs>
   <g stroke-width="1.5" style="font-size:15px">
-    <line x1="120" y1="46" x2="70"  y2="100" stroke="#BECACD"/>
-    <line x1="120" y1="46" x2="170" y2="100" stroke="#BECACD"/>
-    <line x1="300" y1="46" x2="170" y2="100" stroke="#017E5B" stroke-dasharray="5 4"/>
-    <line x1="300" y1="46" x2="330" y2="100" stroke="#017E5B"/>
-    <line x1="70"  y1="136" x2="45"  y2="190" stroke="#BECACD"/>
-    <line x1="70"  y1="136" x2="95"  y2="190" stroke="#BECACD"/>
-    <line x1="170" y1="136" x2="150" y2="190" stroke="#BECACD"/>
-    <line x1="170" y1="136" x2="195" y2="190" stroke="#BECACD"/>
-    <line x1="330" y1="136" x2="195" y2="190" stroke="#017E5B" stroke-dasharray="5 4"/>
-    <line x1="330" y1="136" x2="360" y2="190" stroke="#017E5B"/>
-    <circle cx="120" cy="36" r="17" fill="none" stroke="#60757A"/>
-    <circle cx="300" cy="36" r="17" fill="none" stroke="#017E5B"/>
-    <circle cx="70"  cy="118" r="17" fill="none" stroke="#60757A"/>
-    <circle cx="170" cy="118" r="17" fill="none" stroke="#60757A"/>
-    <circle cx="330" cy="118" r="17" fill="none" stroke="#017E5B"/>
-    <circle cx="45"  cy="208" r="17" fill="none" stroke="#60757A"/>
-    <circle cx="95"  cy="208" r="17" fill="none" stroke="#60757A"/>
-    <circle cx="150" cy="208" r="17" fill="none" stroke="#60757A"/>
-    <circle cx="195" cy="208" r="17" fill="none" stroke="#60757A"/>
-    <circle cx="360" cy="208" r="17" fill="none" stroke="#017E5B"/>
-    <text x="120" y="12" text-anchor="middle" fill="#60757A">v</text>
-    <text x="300" y="12" text-anchor="middle" fill="#017E5B">v′ = (assoc v i x)</text>
+    <!-- v: the old tree, never touched -->
+    <line x1="130" y1="40" x2="72"  y2="122" stroke="#BECACD"/>
+    <line x1="130" y1="40" x2="188" y2="122" stroke="#BECACD"/>
+    <line x1="72"  y1="122" x2="42"  y2="212" stroke="#BECACD"/>
+    <line x1="72"  y1="122" x2="102" y2="212" stroke="#BECACD"/>
+    <line x1="188" y1="122" x2="158" y2="212" stroke="#BECACD"/>
+    <line x1="188" y1="122" x2="218" y2="212" stroke="#BECACD"/>
+    <circle cx="130" cy="40"  r="17" fill="#fff" stroke="#60757A"/>
+    <circle cx="72"  cy="122" r="17" fill="#fff" stroke="#60757A"/>
+    <circle cx="188" cy="122" r="17" fill="#fff" stroke="#60757A"/>
+    <circle cx="42"  cy="212" r="17" fill="#fff" stroke="#60757A"/>
+    <circle cx="102" cy="212" r="17" fill="#fff" stroke="#60757A"/>
+    <circle cx="158" cy="212" r="17" fill="#fff" stroke="#60757A"/>
+    <circle cx="218" cy="212" r="17" fill="#fff" stroke="#60757A"/>
+    <text x="130" y="14" text-anchor="middle" fill="#60757A">v</text>
+    <text x="42"  y="217" text-anchor="middle" fill="#60757A">a</text>
+    <text x="102" y="217" text-anchor="middle" fill="#60757A">b</text>
+    <text x="158" y="217" text-anchor="middle" fill="#60757A">c</text>
+    <text x="218" y="217" text-anchor="middle" fill="#60757A">d</text>
+    <text x="42"  y="248" text-anchor="middle" fill="#BECACD" style="font-size:10px">0</text>
+    <text x="102" y="248" text-anchor="middle" fill="#BECACD" style="font-size:10px">1</text>
+    <text x="158" y="248" text-anchor="middle" fill="#BECACD" style="font-size:10px">2</text>
+    <text x="218" y="248" text-anchor="middle" fill="#60757A" style="font-size:10px">3</text>
+    <!-- v′: one new root→leaf path; dashed arrows = pointers back into v -->
+    <g v-click>
+      <line x1="330" y1="40"  x2="330" y2="122" stroke="#017E5B"/>
+      <line x1="330" y1="122" x2="352" y2="212" stroke="#017E5B"/>
+      <line x1="330" y1="40"  x2="95"  y2="115" stroke="#017E5B" stroke-dasharray="5 4" marker-end="url(#share-arrow)"/>
+      <line x1="330" y1="122" x2="179" y2="201" stroke="#017E5B" stroke-dasharray="5 4" marker-end="url(#share-arrow)"/>
+      <circle cx="330" cy="40"  r="17" fill="#D1F7D2" stroke="#017E5B"/>
+      <circle cx="330" cy="122" r="17" fill="#D1F7D2" stroke="#017E5B"/>
+      <circle cx="352" cy="212" r="17" fill="#D1F7D2" stroke="#017E5B"/>
+      <text x="330" y="14" text-anchor="middle" fill="#017E5B">v′ = (assoc v 3 x)</text>
+      <text x="352" y="217" text-anchor="middle" fill="#017E5B">x</text>
+      <text x="352" y="248" text-anchor="middle" fill="#017E5B" style="font-size:10px">3</text>
+    </g>
   </g>
 </svg>
 
-<p class="muted small">Dashed = shared. Green = the one new path.</p>
+<p v-after class="muted small">Three new nodes, total. The dashed arrows point back into v — everything else is shared.</p>
 
 </div>
 <div>
 
 - Persistent vectors are wide trees <span class="muted">(32-way tries)</span>
 - `assoc` copies ~log₃₂ n small nodes and **shares the rest**
-- 1M-element vector: full copy ≈ 40 ms, persistent update ≈ 0.01 ms
+- 1M-element vector: full copy moves 10⁶ refs, `assoc` copies ~10² — **four orders of magnitude less work**
 
 </div>
 </div>
 
 <!--
-The slide the math/EE crowd enjoys most — immutability goes from virtue to engineering solution. log₃₂(10⁹) ≈ 6: effectively constant. You'll prove the timings live in session 1.
+The slide the math/EE crowd enjoys most — immutability goes from virtue to engineering solution. Beat: v alone first ("we're about to assoc at slot 3"), one click drops in v′ — three green nodes, arrows into everything reused. log₃₂(10⁹) ≈ 6: effectively constant. Orally: on the wall clock that's ≈40 ms vs ≈0.01 ms for 1M elements — you'll prove the timings live in session 1.
 -->
 
 ---
@@ -437,15 +463,20 @@ The slide the math/EE crowd enjoys most — immutability goes from virtue to eng
 
 ## The industry agrees
 
-- **Java** — records, `List.of`, value classes on the roadmap
-- **TypeScript** — `readonly`, `as const`, Immer & friends
-- **F#** — records immutable by default, the pattern everyone borrows
+<div style="margin-top:2.2em;">
+<div class="power-label">PLACES BY DEFAULT · VALUES OPT-IN</div>
+<p class="power dim">Java · C# · TypeScript</p>
+<p class="muted">records · <code>List.of</code> · <code>readonly</code> · <code>as const</code> · Immer</p>
+</div>
 
-<p style="margin-top:1em;">Everyone is converging on values.<br>
-<span class="green">Clojure is the case study of values as the default for <em>everything</em></span> — including the entire standard library.</p>
+<div v-click style="margin-top:1.8em;">
+<div class="power-label">VALUES BY DEFAULT</div>
+<p class="power">Haskell · F# · <span class="green">Clojure</span></p>
+<p class="muted">In Clojure it goes all the way down — the entire standard library assumes it.</p>
+</div>
 
 <!--
-Generous framing, no dunking: the room's languages are all moving this way. Clojure just started there in 2007, so its whole ecosystem assumes it — that's the difference between a feature and a paradigm.
+Generous framing, no dunking — but two distinct tiers. Say out loud: Java and C# are genuinely moving this way (records, value classes on the roadmap), yet the DEFAULT is still places — values are something you opt into. Haskell is the strictest of the bunch — purity enforced by the type system, mutation quarantined in IO/ST. F# flips the default: records and unions are immutable unless you say otherwise (though it still sits on the mutable .NET base library). Clojure starts at values for everything — every core data structure, the whole stdlib, the ecosystem's idioms. That's the difference between a feature and a paradigm. Beat: quiet tier first ("all your languages are adding this…"), one click ("…and these just start there").
 -->
 
 ---
