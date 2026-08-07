@@ -16,10 +16,15 @@ class: parens
 
 <div class="eyebrow">Fagdag · August 2026</div>
 
+<div class="title-row">
+<img src="/clojure-logo.svg" class="title-logo" alt="Clojure logo" />
+
 # Clojure
 
+</div>
+
 <p>
-Value-oriented functional programming with Lisp on the JVM.
+Value-oriented functional programming with Lisp
 </p>
 
 
@@ -29,32 +34,37 @@ No agenda slide — the hook is the agenda. Tone: exploration, not evangelism. O
 
 ---
 
-<div class="eyebrow">THE HOOK</div>
+<div class="eyebrow">Why?</div>
 
 ## The console.log that lies
 
 ```js
 const config = { retries: 3, timeout: 3000 };
 
-console.log(config);       // log the "before" state
+console.log(config);
 
-// ...somewhere far away, months later:
-config.timeout = 60000;    // "just a tweak"
+// ...somewhere in code far away a tweak was added:
+config.timeout = 60000;
 ```
 
 <p class="muted">Now expand the logged object in DevTools:</p>
+
+<v-click>
 
 ```text
 ▸ { retries: 3, timeout: 60000 }     ?!  the log shows the future
 ```
 
+</v-click>
+
 <!--
+Ask the room what the log shows before clicking — let them commit to { retries: 3, timeout: 3000 }, then reveal.
 Demo live: paste examples/console_lies.js into a BROWSER console — not Node (Node serializes at log time; the lie is DevTools lazy expansion; Chrome even admits it with the ⓘ "evaluated just now" tooltip). Everyone in the room has been bitten by this. One line to land the beat — even your debugger can't tell you what your data WAS, because it isn't a value, it's a place — then straight on. Don't open the "how do we defend" discussion here; the next slide generalizes the pain and carries the question.
 -->
 
 ---
 
-<div class="eyebrow">THE HOOK</div>
+<div class="eyebrow">Why?</div>
 
 ## The healthcheck that hangs
 
@@ -137,9 +147,9 @@ JS (if someone objects — slide 2 was JS): the gray row sorts by default semant
 
 <div class="eyebrow">ORIENTATION · A REVISIONIST LISP</div>
 
-## Clojure learned from <span class="green">both traditions</span>
+## Clojure learned from <span class="green">both λ-traditions</span>
 
-<p class="muted">A Lisp at heart — revised with lessons from the other side.</p>
+<p class="muted">A Lisp at heart — revised with lessons from the ML side.</p>
 
 <!--
 The segue slide — and it defuses tribal readings: Clojure is not "team dynamic vs team static", it's a synthesis with a strong opinion about values. The next three slides are the receipts: immutability, the borrowed research, hosting as a principle.
@@ -162,7 +172,7 @@ Beat 1: the heresy — a Lisp that refuses mutation. Say orally: classic Lisps m
 
 <div class="eyebrow">ORIENTATION · A REVISIONIST LISP</div>
 
-## Lazy evaluation
+## <span class="green">Lazy</span> evaluation
 
 <p class="muted">Inspired by Haskell — but just sequences, not everything.</p>
 
@@ -174,13 +184,27 @@ Beat 2: laziness where it helps. Sequences can be infinite, production separated
 
 <div class="eyebrow">ORIENTATION · A REVISIONIST LISP</div>
 
-## Hosted, <span class="green">by design</span>
+## <span class="green">Hosted</span>, by design
 
-<p class="muted">No private island: Clojure targets the JVM · ClojureScript, JavaScript · ClojureCLR, .NET.<br>
-Host types are Clojure’s types — interop is a language feature, not an FFI.</p>
+<div class="cols" style="margin-top:2.2em;">
+  <div>
+    <div class="power-label">Clojure</div>
+    <p class="power">JVM</p>
+  </div>
+  <div>
+    <div class="power-label">ClojureScript</div>
+    <p class="power">JavaScript</p>
+  </div>
+  <div>
+    <div class="power-label">ClojureCLR</div>
+    <p class="power">.NET</p>
+  </div>
+</div>
+
+<p class="muted" style="margin-top:2.2em;">Host types are Clojure’s types — interop is a language feature, not an FFI.</p>
 
 <!--
-Beat 3: pragmatism as a design decision. Hickey's rationale: a new language island forfeits decades of libraries, GC and JIT work — hosting inherits them on day one. Strings ARE java.lang.String / JS strings; no marshalling layer. The triple lands per audience: JVM for the Javaists, JS for the TypeScripters, CLR for the F# crowd. Keep it at the principle here — the practical "keep your profilers, deploy a jar, npm" payoff belongs to the adoption slide near the end.
+Beat 3: pragmatism as a design decision. Open with the phrase "no private island" out loud — it came off the slide. Hickey's rationale: a new language island forfeits decades of libraries, GC and JIT work — hosting inherits them on day one. Strings ARE java.lang.String / JS strings; no marshalling layer. The triple lands per audience: JVM for the Javaists, JS for the TypeScripters, CLR for the F# crowd. Keep it at the principle here — the practical "keep your profilers, deploy a jar, npm" payoff belongs to the adoption slide near the end.
 -->
 
 ---
@@ -212,7 +236,7 @@ The credibility slide — say the trade-offs OUT LOUD, in both directions: Cloju
 
 <div class="eyebrow">VALUES · after Rich Hickey</div>
 
-## Place-oriented programming
+## <span class="blue">Place-oriented</span> programming
 
 <p class="muted">A variable or object property is a <em>place</em>.<br>
 A new value obliterates the old one.<br>
@@ -228,7 +252,7 @@ Hickey core: "The Value of Values". Say the arc verbally: a place = a memory add
 
 <div class="eyebrow">VALUES · after Rich Hickey</div>
 
-## Value-oriented programming
+## <span class="green">Value-oriented</span> programming
 
 <p class="muted">a fact at a point in time<br>
 accrete don't overwrite<br>
@@ -238,9 +262,10 @@ accrete don't overwrite<br>
 Values account for <em>time</em>; places erase it.
 </p>
 
-<p style="margin-top:1.4em;">You already trust this: <span class="green">ledgers, medical journals, git</span>.<br>
-Your ints and strings already work this way.<br>
-<span class="green">In Clojure, everything does.</span></p>
+<p style="margin-top:1.4em;">
+integers and strings –
+ledgers, medical journals, git<br>
+<span class="green">In Clojure everything's a value</span></p>
 
 <!--
 "The Value of Values" in one slide. A value is immutable, semantically transparent, freely shareable, comparable. The TIME argument is the core: a place holds only the latest write — history is gone; with values, old and new coexist, so time becomes explicit in the program. Hickey's line: "accountants don't use erasers" — double-entry ledgers, medical journals, git commits are value-oriented systems everyone already trusts. Second hook: the room already programs with values daily — nobody defensively copies an int, nobody fears their 42 becoming 43 behind their back or a string mutating mid-print (java.util.Date is the exception that proves the rule). Clojure's move isn't exotic: it just extends the scalar guarantee to collections. The next slides make it concrete: equality, updates, structural sharing.
@@ -279,7 +304,7 @@ add(1, 2)
 {:retries 3}   ; map
 [1 2 3]        ; vector
 #{"web-1"}     ; set
-(add 1 2)      ; list — a call!
+(add 1 2)      ; list — a function invocation!
 ```
 
 </div>
@@ -312,17 +337,15 @@ add(1, 2)
 <div>
 
 ```js
-// JavaScript: compares places
-{a: 1} === {a: 1}         // false
-[1, 2, 3] === [1, 2, 3]   // false
+// JavaScript
+{a: 1} === {a: 1}
+[1, 2, 3] === [1, 2, 3]
 ```
 
 ```java
-// Java: places too — even .equals
+// Java
 var p1 = new Point(1, 2);
-p1.equals(new Point(1, 2)) // false!
-// value equality: hand-write equals()
-// + hashCode() — for every class
+p1.equals(new Point(1, 2))
 ```
 
 </div>
@@ -335,18 +358,17 @@ p1.equals(new Point(1, 2)) // false!
 ```
 
 ```clojure
-;; Maps can even be KEYS in maps…
+;; Maps can even be KEYS in maps
 {{:method :get
   :path "/tickets"} list-tickets}
-;; …and live in sets, safely
-#{{:host "web-1"} {:host "web-2"}}
 ```
 
 </div>
 </div>
 
 <!--
-The "wait, what?" slide. Left column is the place-oriented world: JS === on structures, Java Object.equals defaulting to reference identity — value equality means hand-writing equals/hashCode per class (records fix this for data carriers; C# is the same story, records opt in). Right column: the identity/equality distinction is MANUFACTURED BY MUTATION (Baker's "egal", "Equal Rights for Functional Objects" 1993 — the paper behind Clojure's =). Pointer identity only matters because equal mutable objects can diverge later; for immutable values the distinction collapses — Clojure has identical? and idiomatic code never uses it. Bonus beats: = works across collection types — (= '(1 2 3) [1 2 3]) is true; values live safely in sets and as map keys, while mutable HashMap keys on the JVM are a classic hazard (mutate → lose the entry).
+Results are off the left column on purpose — ask the room to call each one: === false, false (everyone knows), then .equals(new Point(1,2))… also false! Object.equals defaults to reference identity; value equality means hand-writing equals/hashCode per class (records fix this for data carriers). Then click: the Clojure column answers.
+The "wait, what?" slide. Left column is the place-oriented world: JS === on structures, Java Object.equals defaulting to reference identity — value equality means hand-writing equals/hashCode per class (records fix this for data carriers; C# is the same story, records opt in). Right column: the identity/equality distinction is MANUFACTURED BY MUTATION (Baker's "egal", "Equal Rights for Functional Objects" 1993 — the paper behind Clojure's =). Pointer identity only matters because equal mutable objects can diverge later; for immutable values the distinction collapses — Clojure has identical? and idiomatic code never uses it. Bonus beats: = works across collection types — (= '(1 2 3) [1 2 3]) is true. Say verbally off the map-key example: values also live safely in SETS — #{{:host "web-1"} {:host "web-2"}} — while mutable HashMap keys on the JVM are a classic hazard (mutate → lose the entry).
 -->
 
 ---
@@ -426,6 +448,7 @@ Callback to the hook (slides 2–3) — close the loop explicitly. Free · Fearl
     <text x="158" y="248" text-anchor="middle" fill="#BECACD" style="font-size:10px">2</text>
     <text x="218" y="248" text-anchor="middle" fill="#60757A" style="font-size:10px">3</text>
     <!-- v′: one new root→leaf path; dashed arrows = pointers back into v -->
+    <text x="330" y="14" text-anchor="middle" fill="#017E5B">v2 = (assoc v 3 x)</text>
     <g v-click>
       <line x1="330" y1="40"  x2="330" y2="122" stroke="#017E5B"/>
       <line x1="330" y1="122" x2="352" y2="212" stroke="#017E5B"/>
@@ -434,7 +457,6 @@ Callback to the hook (slides 2–3) — close the loop explicitly. Free · Fearl
       <circle cx="330" cy="40"  r="17" fill="#D1F7D2" stroke="#017E5B"/>
       <circle cx="330" cy="122" r="17" fill="#D1F7D2" stroke="#017E5B"/>
       <circle cx="352" cy="212" r="17" fill="#D1F7D2" stroke="#017E5B"/>
-      <text x="330" y="14" text-anchor="middle" fill="#017E5B">v′ = (assoc v 3 x)</text>
       <text x="352" y="217" text-anchor="middle" fill="#017E5B">x</text>
       <text x="352" y="248" text-anchor="middle" fill="#017E5B" style="font-size:10px">3</text>
     </g>
@@ -567,6 +589,7 @@ Tie back to pains they have this week. If ahead of schedule: 60-second live atom
 
 - **Java devs** — full JVM interop: call any Java library directly, deploy as a jar, keep your profilers and ops
 - **TypeScript devs** — ClojureScript compiles to JS, runs on npm, React via Reagent
+- **C# devs** — ClojureCLR runs on .NET: same language, full CLR interop
 - Curiosity is low-risk: a library, a script, a build tool — not a rewrite
 
 <!--

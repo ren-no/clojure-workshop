@@ -150,6 +150,18 @@
   margin-top: 1.8rem;
 }
 
+/* Title slide: Clojure logo on the same line as the h1 */
+.slidev-layout .title-row {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+}
+.slidev-layout .title-row h1 { margin: 0; }
+.slidev-layout .title-logo {
+  height: 5rem;
+  width: auto;
+}
+
 /* Signature: dim parens framing the title + parking slides (class: parens) */
 .slidev-layout.parens {
   position: relative;
