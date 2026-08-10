@@ -617,7 +617,79 @@ Tie back to pains they have this week. If ahead of schedule: 60-second live atom
 - Curiosity is low-risk: a library, a script, a build tool — not a rewrite
 
 <!--
-Positions the next step as safe. Babashka is also worth a mention for the shell-scripting crowd — Clojure with instant startup.
+Positions the next step as safe. Babashka is also worth a mention for the shell-scripting crowd — Clojure with instant startup. The next two slides are the receipts: interop in both directions, in code.
+-->
+
+---
+
+<div class="eyebrow">ADOPTION · INTEROP</div>
+
+## Java from Clojure — <span class="green">no FFI</span>
+
+```clojure
+(import (java.time LocalDate))
+
+(def date (LocalDate/parse "2026-08-10"))   ; static method
+(.plusDays date 30)                         ; instance method → a new LocalDate
+(java.io.File. "deps.edn")                  ; constructor — the trailing dot
+
+(.toUpperCase "fagdag")                     ; => "FAGDAG" — strings ARE java.lang.String
+
+;; host calls chain like any Clojure code
+(-> date (.plusDays 4) .getDayOfWeek str)   ; => "FRIDAY"
+```
+
+<p style="margin-top:1.2em;">No wrappers, no bindings, no marshalling — <span class="green">the dot is the whole FFI</span>.</p>
+<p class="muted">Every library on Maven Central is one <code>deps.edn</code> line away. Don’t port it — call it.</p>
+
+<!--
+Receipt #1 — the everyday direction. Say it: the dot IS the FFI. This is not a bindings layer; the compiler emits the same bytecode javac would (add a type hint and there's no reflection either). The .toUpperCase line is the "hosted" slide's claim made concrete — Clojure strings, numbers and collections ARE host objects, nothing crosses a boundary because there is no boundary. Bonus beats, verbal: Clojure fns implement Runnable and Callable, so you can hand one straight to an ExecutorService; and the threading macro from act two works on host calls too — interop code still reads like Clojure. If someone asks about the bare .getDayOfWeek in the thread: (-> x .foo) expands to (.foo x), parens are optional at arity 1.
+-->
+
+---
+
+<div class="eyebrow">ADOPTION · INTEROP</div>
+
+## Clojure from Java — <span class="green">just a static method</span>
+
+<div class="cols code-sm">
+<div>
+
+```java
+package acme;
+
+record Item(double price, int qty) {}
+record Order(List<Item> items) {}
+
+var order = new Order(List.of(new Item(129, 2)));
+
+double total = Pricing.quote(order);  // 258.0
+```
+
+</div>
+<div>
+
+```clojure
+;; acme/pricing.clj — the whole new module
+(ns acme.pricing
+  (:gen-class
+   :name acme.Pricing
+   :methods [^:static [quote [acme.Order] double]]))
+
+(defn -quote [order]         ; ← that Java record,
+  (->> (.items order)        ;   read with the same
+       (map #(* (.price %)   ;   dot as last slide
+                (.qty %)))
+       (reduce +)))
+```
+
+</div>
+</div>
+
+<p style="margin-top:1.2em;">One new module in Clojure — <span class="green">the rest of the service never notices</span>.</p>
+
+<!--
+Receipt #2 — the partial-adoption clincher. Read it left to right: the Java service builds an Order exactly as it always has and calls Pricing.quote(order) — a plain static method, typed signature, IDE completion, nothing to react to. On the right: the ENTIRE new module. :gen-class does the bridging: :name picks the class, ^:static [quote [acme.Order] double] the signature, and -quote is the implementation (the "-" prefix is gen-class's default binding convention). The namespace is AOT-compiled at build time (tools.build compile-clj, or lein :aot; javac runs first so acme.Order exists) — Java gets a real class file in the same jar. The object crosses as an ordinary JVM reference — no DTO, no serialization; .items/.price/.qty are the record accessors via the same dot as the previous slide, and map/reduce run directly on the java.util.List because Clojure's sequence functions accept any Iterable. Return trip: (reduce +) yields a Double, gen-class unboxes it to double — 129.0 × 2 = 258.0. If someone asks about skipping the AOT step: the official low-ceremony API is clojure.java.api.Clojure + IFn — Clojure.var("clojure.core", "require") to load the namespace, then Clojure.var("acme.pricing", "quote").invoke(order) — no compile step, but stringly-typed; gen-class is the version Java teammates accept without flinching. Land the pitch: pilot on a leaf module with a clear boundary — pricing rules, a report generator, a data transform — and the rest of the codebase never has to know.
 -->
 
 ---

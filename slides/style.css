@@ -85,6 +85,11 @@
 
 .cols { display: flex; gap: 1.5rem; align-items: stretch; }
 .cols > div { flex: 1; min-width: 0; }
+/* Interop receipt: two full code examples side by side need smaller type */
+.slidev-layout .code-sm .slidev-code {
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
 
 /* Two traditions: centered columns under the family tree — the tree names
    the traditions; each column is colored key phrase > muted detail > motto */
