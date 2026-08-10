@@ -485,20 +485,44 @@ The slide the math/EE crowd enjoys most — immutability goes from virtue to eng
 
 ## The industry agrees
 
-<div style="margin-top:2.2em;">
+<div style="margin-top:2em;">
 <div class="power-label">PLACES BY DEFAULT · VALUES OPT-IN</div>
-<p class="power dim">Java · C# · TypeScript</p>
-<p class="muted">records · <code>List.of</code> · <code>readonly</code> · <code>as const</code> · Immer</p>
+<div class="lang-rows">
+  <span class="lang">Java</span><span class="muted">records · <code>List.of</code></span>
+  <span class="lang">C#</span><span class="muted">records · <code>readonly</code></span>
+  <span class="lang">TypeScript</span><span class="muted"><code>as const</code> · <code>Readonly&lt;T&gt;</code> · Immer</span>
+  <span class="lang">Kotlin</span><span class="muted"><code>kotlinx.collections.immutable</code> — persistent collections, inspired by Clojure’s</span>
+</div>
 </div>
 
-<div v-click style="margin-top:1.8em;">
+<p class="muted" style="margin-top:2.2em;">All of it opt-in — the default is still a place.</p>
+
+<!--
+Generous framing, no dunking. Say out loud: Java and C# are genuinely moving this way (records, value classes on the roadmap), yet the DEFAULT is still places — values are something you opt into. Kotlin is the sharpest receipt: JetBrains officially ships kotlinx.collections.immutable — persistent collections with structural sharing, inspired by Clojure's design (newer CHAMP-based tries under the hood) — and still opt-in; the default List is a place. Beat into the next slide: "all your languages are adding this…"
+-->
+
+---
+
+<div class="eyebrow">VALUES</div>
+
+## …and some just start there
+
+<div style="margin-top:2.2em;">
 <div class="power-label">VALUES BY DEFAULT</div>
-<p class="power">Haskell · F# · <span class="green">Clojure</span></p>
-<p class="muted">In Clojure it goes all the way down — the entire standard library assumes it.</p>
+<div class="lang-rows">
+  <span class="lang green">Haskell</span><span class="muted">purity enforced by the type system</span>
+  <span class="lang green">F#</span><span class="muted">immutable by default — mutation is the extra keyword</span>
+  <span class="lang">Scala</span><span class="muted">the default collections are persistent — inspired by Clojure’s</span>
+</div>
+</div>
+
+<div style="margin-top:1.8em;">
+<p class="power"><span class="green">Clojure</span> — values all the way down</p>
+<p class="muted">Every core data structure, the entire standard library, the ecosystem’s idioms.</p>
 </div>
 
 <!--
-Generous framing, no dunking — but two distinct tiers. Say out loud: Java and C# are genuinely moving this way (records, value classes on the roadmap), yet the DEFAULT is still places — values are something you opt into. Haskell is the strictest of the bunch — purity enforced by the type system, mutation quarantined in IO/ST. F# flips the default: records and unions are immutable unless you say otherwise (though it still sits on the mutable .NET base library). Clojure starts at values for everything — every core data structure, the whole stdlib, the ecosystem's idioms. That's the difference between a feature and a paradigm. Beat: quiet tier first ("all your languages are adding this…"), one click ("…and these just start there").
+"…and these just start there." Haskell is the strictest — purity enforced by types, mutation quarantined in IO/ST. F# flips the default: let is immutable, mutation needs the extra keyword (though it sits on the mutable .NET base library). Scala is the honest middle: the default collection library IS persistent (Vector's 32-way trie modeled on Clojure's, CHAMP maps/sets since 2.13), but var is as frictionless as val — idiom carries it, not the language. Clojure starts at values for everything — every core data structure, the whole stdlib, the ecosystem's idioms. That's the difference between a feature and a paradigm.
 -->
 
 ---

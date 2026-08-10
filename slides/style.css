@@ -124,6 +124,21 @@
 /* Backdrop tier ("The industry agrees"): places-by-default languages,
    one step quieter — same grey as the dim tradition column */
 .slidev-layout .power.dim { color: var(--color-grey-600); }
+/* "The industry agrees" opt-in tier: language → its constructs, one row each */
+.slidev-layout .lang-rows {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 2em;
+  row-gap: 0.35em;
+  align-items: baseline;
+}
+.slidev-layout .lang-rows .lang {
+  font-size: 1.15rem;
+  font-weight: var(--font-weight-heading);
+  color: var(--color-grey-600);
+}
+.slidev-layout .lang-rows .lang.green { color: var(--color-brand-text-primary); }
+.slidev-layout .lang-rows .muted { font-size: 1.05rem; }
 
 .slidev-layout .quote {
   font-weight: var(--font-weight-light);
