@@ -621,17 +621,24 @@ Tie back to pains they have this week. If ahead of schedule: 60-second live atom
 
 ---
 
-<div class="eyebrow">ADOPTION</div>
+<div class="eyebrow">ADOPTION · REPRISE</div>
 
-## Clojure meets your stack where it is
+## <span class="green">Hosted</span>, cashed out
 
-- **Java devs** — full JVM interop: call any Java library directly, deploy as a jar, keep your profilers and ops
-- **TypeScript devs** — ClojureScript compiles to JS, runs on npm, React via Reagent
-- **C# devs** — ClojureCLR runs on .NET: same language, full CLR interop
-- Curiosity is low-risk: a library, a script, a build tool — not a rewrite
+<p class="muted">The hosts from the opening — this time read from the stack you already run.</p>
+
+<div class="lang-rows" style="margin-top:1.8em; row-gap:0.7em;">
+  <span class="lang ink">Java</span><span class="muted">call any JVM library, deploy a jar, keep your profilers and your ops</span>
+  <span class="lang ink">JavaScript</span><span class="muted">ClojureScript compiles to JS — runs in the browser, React through Reagent</span>
+  <span class="lang ink">C#</span><span class="muted">ClojureCLR runs on .NET — same language, full CLR interop</span>
+  <span class="lang ink">C++</span><span class="muted">jank runs on LLVM — near-native performance, easy C bindings</span>
+  <span class="lang ink">Shell</span><span class="muted">Babashka — Clojure scripts with instant startup</span>
+</div>
+
+<p v-click style="margin-top:2.2em;">Curiosity is low-risk: a library, a script, a build tool — <span class="green">not a rewrite</span>.</p>
 
 <!--
-Positions the next step as safe. Babashka is also worth a mention for the shell-scripting crowd — Clojure with instant startup. The next two slides are the receipts: interop in both directions, in code.
+The reprise — say the callback OUT LOUD: "you saw this triple at the top of the hour as a design principle; here it is as a risk assessment." Same facts, arrow reversed: the opening slide read Clojure → host, this one reads your stack → your entry point. Babashka earns its row for the shell-scripting crowd — Clojure with instant startup. jank is the newest host: Clojure on LLVM with seamless C/C++ interop — worth saying out loud that it's young (fresh out of alpha) while the other hosts are decades-proven. One beat: the kicker. The next two slides are the receipts: interop in both directions, in code.
 -->
 
 ---

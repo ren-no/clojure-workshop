@@ -151,6 +151,8 @@
   color: var(--color-grey-600);
 }
 .slidev-layout .lang-rows .lang.green { color: var(--color-brand-text-primary); }
+/* Adoption reprise: every row is live — ink labels, not the grey backdrop tier */
+.slidev-layout .lang-rows .lang.ink { color: var(--color-text-primary); }
 .slidev-layout .lang-rows .muted { font-size: 1.05rem; }
 
 .slidev-layout .quote {
