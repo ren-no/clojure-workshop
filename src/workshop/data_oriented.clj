@@ -28,10 +28,15 @@
 
 (comment
 
+  ;; Get the first ticket
   (first tickets)
-  (:status (first tickets))          ;; a keyword looks itself up
+
+  ;; a keyword looks itself up
+  (:status (first tickets))
+
   (map :assignee tickets)
   (distinct (map :assignee tickets))
+  
 
   ;; Destructuring — pattern-shaped access, F# folks will feel at home:
   (let [{:keys [id status assignee]} (first tickets)]
