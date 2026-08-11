@@ -597,9 +597,23 @@ The thesis slide of the whole talk. You just built my-> live; here's proof the r
 
 ## Where this bites, in practice
 
-- **Concurrency** — immutable values + `atom`/`swap!` make shared state tractable
-- **Testing** — pure functions over values need no mocks: data in, data out, `=`
-- **Debugging** — values print, compare, serialize; capture a failing input <em>as literal data</em> and replay it in the REPL
+<div class="cols" style="margin-top:2.4em; gap:2.5rem;">
+  <div>
+    <div class="power-label">Concurrency</div>
+    <p class="power">No locks</p>
+    <div class="power-stack">Immutable values<br>one shared <code>atom</code><br><code>swap!</code> with a pure function</div>
+  </div>
+  <div>
+    <div class="power-label">Testing</div>
+    <p class="power">No mocks</p>
+    <div class="power-stack">Pure functions over values<br>data in, data out<br>assert with <code>=</code></div>
+  </div>
+  <div>
+    <div class="power-label">Debugging</div>
+    <p class="power">Replay the bug</p>
+    <div class="power-stack">Values print and compare<br>a failing input is <em>just data</em><br>paste it back into the REPL</div>
+  </div>
+</div>
 
 <!--
 Tie back to pains they have this week. If ahead of schedule: 60-second live atom demo — (def a (atom {})) (swap! a assoc :x 1) — point out swap! takes a pure function of value → value.

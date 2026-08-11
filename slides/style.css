@@ -126,6 +126,14 @@
   margin: 0.1em 0 0.3em;
 }
 .slidev-layout .power + p.muted { font-size: 1.05rem; }
+/* Mechanics under a claim ("Where this bites"): a vertical stack,
+   one short thought per line — no wrapping, columns stay airy */
+.slidev-layout .power-stack {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: var(--color-text-secondary);
+  margin-top: 0.4rem;
+}
 /* Backdrop tier ("The industry agrees"): places-by-default languages,
    one step quieter — same grey as the dim tradition column */
 .slidev-layout .power.dim { color: var(--color-grey-600); }
