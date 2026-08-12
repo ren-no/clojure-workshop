@@ -17,7 +17,7 @@ class: parens
 <div class="eyebrow">Fagdag · August 2026</div>
 
 <div class="title-row">
-<img src="/clojure-logo.svg" class="title-logo" alt="Clojure logo" />
+<CljLogo class="title-logo" />
 
 # Clojure
 
