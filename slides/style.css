@@ -90,6 +90,11 @@
   font-size: 0.75rem;
   line-height: 1.5;
 }
+/* Equal-height code panels ("Libraries take data"): each column becomes a
+   flex stack so its code box stretches to match the tallest sibling */
+.slidev-layout .cols.eq-code > div { display: flex; flex-direction: column; }
+.slidev-layout .cols.eq-code .slidev-code-wrapper { flex: 1; display: flex; }
+.slidev-layout .cols.eq-code .slidev-code-wrapper .slidev-code { flex: 1; width: 100%; }
 
 /* Two traditions: centered columns under the family tree — the tree names
    the traditions; each column is colored key phrase > muted detail > motto */

@@ -623,6 +623,54 @@ Tie back to pains they have this week. If ahead of schedule: 60-second live atom
 
 ---
 
+<div class="eyebrow">IN PRACTICE</div>
+
+## Libraries take <span class="green">data</span>, not syntax
+
+<div class="cols code-sm eq-code" style="margin-top:1.8em; gap:2rem;">
+<div>
+<div class="power-label">Routes · reitit</div>
+
+```clojure
+[["/users"
+  {:get list-users}]
+ ["/users/:id"
+  {:get show-user}]]
+```
+
+</div>
+<div>
+<div class="power-label">HTML · hiccup</div>
+
+```clojure
+[:div
+ [:h2 "Users"]
+ [:a {:href "/users/42"}
+  "Ada Lovelace"]]
+```
+
+</div>
+<div>
+<div class="power-label">SQL · honeysql</div>
+
+```clojure
+{:select [:id :name]
+ :from   [:users]
+ :where  [:= :id 42]}
+```
+
+</div>
+</div>
+
+<p v-click style="margin-top:2.2em;">No template language, no query builder, no routing DSL — <span class="green">vectors and maps</span>.<br>
+<span class="muted">So <code>assoc</code>, <code>map</code>, and <code>merge</code> already work on your routes, your pages, your queries.</span></p>
+
+<!--
+Echo of the thesis slide: language features are libraries, and libraries take data. Read the three columns as ONE story — a route table pointing at /users/:id, a page linking to /users/42, the query that fetches user 42. These are the ecosystem defaults, not fringe libraries. Verbal beats on the kicker: because it's data and not string concatenation, SQL injection and unescaped HTML are structurally off the table (honeysql emits parameterized queries, hiccup escapes by default); and "your routes are a value" means you can print them, diff them between deploys, test them with = — everything from the debugging column applies to your whole web stack. If asked how data becomes SQL/HTML: one function call — (sql/format ...), (html ...) — at the edge.
+-->
+
+---
+
 <div class="eyebrow">ADOPTION · REPRISE</div>
 
 ## <span class="green">Hosted</span>, cashed out
