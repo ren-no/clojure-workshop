@@ -27,6 +27,8 @@ class: parens
 Value-oriented functional programming with Lisp
 </p>
 
+<p class="hosts">JVM · JS · CLR · native</p>
+
 
 <!--
 No agenda slide — the hook is the agenda. Tone: exploration, not evangelism. One line of framing, then straight to slide 2.

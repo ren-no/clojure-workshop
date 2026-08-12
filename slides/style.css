@@ -191,6 +191,15 @@
   height: 5rem;
   width: auto;
 }
+/* Host whisper under the tagline: eyebrow's mono voice, two steps
+   quieter than .muted — foreshadows the "Hosted" beat */
+.slidev-layout .hosts {
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--color-grey-500);
+  margin-top: 1.6rem;
+}
 
 /* Signature: dim parens framing the title + parking slides (class: parens) */
 .slidev-layout.parens {
