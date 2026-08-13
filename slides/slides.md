@@ -94,52 +94,85 @@ Slide 2 was JS, this one is Java on purpose — same disease, second language, s
 
 <svg viewBox="0 0 900 200" style="width:100%; margin-bottom:0.4em;">
   <g style="font-size:17px" fill="#142B2F">
-    <g fill="#60757A">
-      <rect x="35" y="8" width="230" height="38" rx="8" fill="none" stroke="#D8E5E7" stroke-width="1.5"/>
-      <text x="150" y="32" text-anchor="middle">Turing machine (1936)</text>
-      <line x1="150" y1="46" x2="150" y2="82" stroke="#D8E5E7" stroke-width="1.5"/>
-      <rect x="35" y="86" width="230" height="38" rx="8" fill="none" stroke="#D8E5E7" stroke-width="1.5"/>
-      <text x="150" y="110" text-anchor="middle">Fortran (1957) — Backus</text>
-      <line x1="150" y1="124" x2="150" y2="148" stroke="#D8E5E7" stroke-width="1.5"/>
-      <text x="150" y="176" text-anchor="middle">C · Java · C# · Python · JS</text>
+    <g :fill="$clicks >= 2 ? '#60757A' : '#142B2F'" style="transition: fill 0.4s">
+      <rect x="15" y="8" width="270" height="38" rx="8" fill="none" :stroke="$clicks >= 2 ? '#D8E5E7' : '#BECACD'" style="transition: stroke 0.4s" stroke-width="1.5"/>
+      <text x="150" y="32" text-anchor="middle">Turing machine (1936) — Turing</text>
+      <g v-click.hide="2" transform="translate(20, 66)">
+        <TuringTape :running="$clicks < 1" />
+      </g>
+      <g v-click="2" fill="#60757A">
+        <line x1="150" y1="46" x2="150" y2="82" stroke="#D8E5E7" stroke-width="1.5"/>
+        <rect x="35" y="86" width="230" height="38" rx="8" fill="none" stroke="#D8E5E7" stroke-width="1.5"/>
+        <text x="150" y="110" text-anchor="middle">Fortran (1957) — Backus</text>
+        <line x1="150" y1="124" x2="150" y2="148" stroke="#D8E5E7" stroke-width="1.5"/>
+        <text x="150" y="176" text-anchor="middle">C · Java · C# · Python · JS</text>
+      </g>
     </g>
     <line x1="300" y1="10" x2="300" y2="192" stroke="#D8E5E7" stroke-width="1.5" stroke-dasharray="3 7"/>
     <rect x="465" y="8" width="270" height="38" rx="8" fill="none" stroke="#BECACD" stroke-width="1.5"/>
     <text x="600" y="32" text-anchor="middle">λ-calculus (1930s) — Church</text>
-    <line x1="550" y1="46" x2="450" y2="82" stroke="#19547D" stroke-width="1.5"/>
-    <line x1="650" y1="46" x2="750" y2="82" stroke="#017E5B" stroke-width="1.5"/>
-    <rect x="345" y="86" width="210" height="38" rx="8" fill="none" stroke="#19547D" stroke-width="1.5"/>
-    <text x="450" y="110" text-anchor="middle">ML (1973) — Milner</text>
-    <rect x="640" y="86" width="220" height="38" rx="8" fill="none" stroke="#017E5B" stroke-width="1.5"/>
-    <text x="750" y="110" text-anchor="middle">Lisp (1958) — McCarthy</text>
-    <line x1="450" y1="124" x2="450" y2="148" stroke="#19547D" stroke-width="1.5"/>
-    <line x1="750" y1="124" x2="750" y2="148" stroke="#017E5B" stroke-width="1.5"/>
-    <text x="450" y="176" text-anchor="middle" fill="#19547D">OCaml → F# · Haskell · Scala</text>
-    <text x="750" y="176" text-anchor="middle" fill="#017E5B">Scheme · Common Lisp · Clojure</text>
+    <g v-click.hide="2" transform="translate(475, 90)">
+      <LambdaFactorial :running="$clicks === 1" />
+    </g>
+    <g v-click="2">
+      <line x1="550" y1="46" x2="450" y2="82" stroke="#19547D" stroke-width="1.5"/>
+      <line x1="650" y1="46" x2="750" y2="82" stroke="#017E5B" stroke-width="1.5"/>
+      <rect x="345" y="86" width="210" height="38" rx="8" fill="none" stroke="#19547D" stroke-width="1.5"/>
+      <text x="450" y="110" text-anchor="middle">ML (1973) — Milner</text>
+      <rect x="640" y="86" width="220" height="38" rx="8" fill="none" stroke="#017E5B" stroke-width="1.5"/>
+      <text x="750" y="110" text-anchor="middle">Lisp (1958) — McCarthy</text>
+      <line x1="450" y1="124" x2="450" y2="148" stroke="#19547D" stroke-width="1.5"/>
+      <line x1="750" y1="124" x2="750" y2="148" stroke="#017E5B" stroke-width="1.5"/>
+      <text x="450" y="176" text-anchor="middle" fill="#19547D">OCaml → F# · Haskell · Scala</text>
+      <text x="750" y="176" text-anchor="middle" fill="#017E5B">Scheme · Common Lisp · Clojure</text>
+    </g>
   </g>
 </svg>
 
-<div class="cols traditions">
-  <div class="dim">
-    <h3>State as places</h3>
-    <p class="detail">assignment · aliasing · defensive copies</p>
-    <p class="motto">The default we all inherited</p>
+<div class="traditions traditions-stage">
+  <div class="swap">
+    <div v-click.hide="2">
+      <div class="prims">
+        <p class="prim"><strong>tape</strong> — cells of symbols</p>
+        <p class="prim"><strong>head</strong> — read · write · move</p>
+        <p class="prim"><strong>rules</strong> — a finite state table</p>
+      </div>
+      <p class="motto">Compute by overwriting memory</p>
+    </div>
+    <div class="dim" v-click="2">
+      <h3>State as places</h3>
+      <p class="detail">assignment · aliasing · defensive copies</p>
+      <p class="motto">The default we all inherited</p>
+    </div>
   </div>
-  <div>
-    <h3 class="blue">Types as proofs</h3>
-    <p class="detail">inference · ADTs · exhaustive matching</p>
-    <p class="motto">Make illegal states unrepresentable</p>
-  </div>
-  <div>
-    <h3 class="green">Code as data</h3>
-    <p class="detail">macros — the language extensible from within</p>
-    <p class="motto">Programs as malleable as data</p>
+  <div class="swap span-2">
+    <div v-click.hide="2">
+      <div class="prims">
+        <p class="prim"><strong>variables</strong> — <code>x</code></p>
+        <p class="prim"><strong>abstraction</strong> — <code>λx.e</code> — define a function</p>
+        <p class="prim"><strong>application</strong> — <code>f x</code> — apply a function</p>
+      </div>
+      <p class="motto">Compute by evaluating expressions</p>
+    </div>
+    <div class="cols-2" v-click="2">
+      <div>
+        <h3 class="blue">Types as proofs</h3>
+        <p class="detail">inference · ADTs · exhaustive matching</p>
+        <p class="motto">Make illegal states unrepresentable</p>
+      </div>
+      <div>
+        <h3 class="green">Code as data</h3>
+        <p class="detail">macros — the language extensible from within</p>
+        <p class="motto">Programs as malleable as data</p>
+      </div>
+    </div>
   </div>
 </div>
 
 <!--
-Open with the fork: 1930s, before any computer exists, Church boils computation down to one move — define a function, apply a function. That's the whole language, and it's provably as powerful as Turing's machine (Church–Turing). Two equal roots for computing: Turing's — a machine overwriting memory, step by step — and Church's — evaluating an expression down to a value. The gray branch is the one everyone in the room grew up in; mutation isn't "how programming is", it's one of two traditions.
-What both λ branches inherit: functions are values (higher-order functions fall out for free), everything is an expression, closures, recursion instead of loops.
+Beat 0 — two tiny formalisms, 1930s, before any computer exists. The tape machine runs while you talk Turing: a tape of cells, a head that reads/writes/moves, a finite rule table — compute by overwriting memory, step by step (the animation is literally doing it: walk, write a 1, walk back, erase).
+Click 1 — the machine parks, the λ side comes alive: three constructs, nothing else — a variable, defining a function, applying a function. The factorial unfold shows the third trick: no loops, a function applying itself — recursion. Provably equal in power (Church–Turing): two equal roots, opposite default moves.
+Click 2 — both roots cash out into history at once. Left: Fortran, then C, Java, everything the room grew up in — the root dims to gray on purpose, it becomes the backdrop; mutation isn't "how programming is", it's one of two traditions. Right: the λ root forks into two schools. What both λ branches inherit: functions are values (higher-order functions fall out for free), everything is an expression, closures, recursion instead of loops.
 Say it explicitly: "F# folks — you already know the blue column. Today is a guided tour of the green one." Mention Hindley–Milner verbally as the historical root; don't over-claim it for Scala (local inference, different type system).
 If asked: Lisp took the λ notation more than the theory — dynamic scope and broken closures until Scheme (1975) made a Lisp faithful to the calculus. And Backus, father of Fortran, used his 1977 Turing Award lecture to argue for abandoning his own branch: "Can Programming Be Liberated from the von Neumann Style?"
 JS (if someone objects — slide 2 was JS): the gray row sorts by default semantics, not ancestry. Eich was hired in 1995 to put Scheme in the browser; management demanded Java's syntax. The closures survived, the defaults didn't — objects are places you overwrite. Stronger point: every gray language has spent two decades importing λ features (Java 8 lambdas, C# LINQ, C++11 lambdas). Features crossed the tree; defaults never did. That's the wedge for this talk — Clojure flips the default.

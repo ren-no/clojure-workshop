@@ -115,6 +115,23 @@
 .slidev-layout .traditions .dim h3,
 .slidev-layout .traditions .dim .detail,
 .slidev-layout .traditions .dim .motto { color: var(--color-grey-600); }
+/* Staging grid: column 1 sits under the Turing root (centered at 1/6 of the
+   tree), the 2-col span under the λ root (centered at 4/6). Each .swap cell
+   stacks a root's primitives over the tradition column that replaces them
+   on click — same grid area, so the swap is a cross-fade with no reflow. */
+.traditions-stage { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.traditions-stage .swap { display: grid; }
+.traditions-stage .swap > div { grid-area: 1 / 1; min-width: 0; }
+.traditions-stage .span-2 { grid-column: 2 / 4; }
+.traditions-stage .cols-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+/* The primitive list: lines share a left edge, block centered under its root */
+.slidev-layout .traditions .prims { display: inline-block; text-align: left; }
+.slidev-layout .traditions .prim {
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+.slidev-layout .traditions .prim strong { color: var(--color-text-primary); }
 
 /* Statement pairs ("Two superpowers"): quiet mono label, colored phrase, muted note */
 .power-label {
