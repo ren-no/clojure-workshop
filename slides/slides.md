@@ -627,24 +627,25 @@ Say it, don’t read it: this is not text that LOOKS like a list — it IS a lis
 
 ## Language features are libraries
 
-```clojure
-(source ->)      ; the REAL threading macro, from clojure/core.clj
-(defmacro -> [x & forms]
-  (loop [x x, forms forms]
-    (if forms
-      (let [form (first forms)
-            threaded (if (seq? form)
-                       (with-meta `(~(first form) ~x ~@(next form)) (meta form))
-                       (list form x))]
-        (recur threaded (next forms)))
-      x)))
-```
+<div class="feature-rows">
+  <span class="power-label span-2">ELSEWHERE · A LANGUAGE VERSION</span><span class="power-label">HERE · A NAME</span>
+  <span class="feat">try-with-resources</span><span class="prov">Java 7 <span class="yr">2011</span></span><span class="clj">with-open <span class="yr">2009</span></span>
+  <span class="feat">?. null-safe access</span><span class="prov">C# 6 <span class="yr">2015</span> · TypeScript 3.7 <span class="yr">2019</span></span><span class="clj">some-&gt; <span class="yr">2013</span></span>
+  <span class="feat">async / await</span><span class="prov">JS promises <span class="yr">2015</span> · async/await <span class="yr">2017</span></span><span class="clj">core.async <span class="yr">2013</span></span>
+</div>
 
-- F#’s `|>` is elegant function application — `some->` controls <em>evaluation itself</em>
-- `core.async` added CSP concurrency **as a library**; async/await needed compiler releases elsewhere
+<p v-click style="margin-top:2.4em;">Right column got there <span class="green">first</span> — and nobody shipped a compiler.</p>
 
 <!--
-The thesis slide of the whole talk. You just built my-> live; here's proof the real one is a page of userland Clojure. Be precise and generous about |> — definable in one line BECAUSE it's application; macros operate one level up. Call back to try-with, which opened the REPL session: Java 7 needed new grammar, a new interface and a compiler release (JSR 334) to ship try-with-resources; with-open is ten lines in clojure/core.clj and you wrote your own in six. That was the receipt they felt; -> is the same claim about a feature they don't have at all.
+The thesis slide of the whole talk. The code is gone on purpose — they watched my-> get built and expanded in the REPL twenty minutes ago; this is the receipt, not a re-run. Read the rows DOWN the left first: every entry is a version number, something a committee shipped and you waited for. Then down the right: names you type, with earlier dates next to them. That asymmetry is the argument — let it sit before you click.
+
+Per-row beats, pick two, don't do all three. try-with-resources is theirs: they wrote it themselves this morning in six lines, core's with-open is ten, and it is tagged :added "1.0" — 2009, two years before Java 7. some-> is the one to be precise about: F#'s |> is definable in one line BECAUSE it's function application, but no function can decline to evaluate its argument — macros operate one level up. core.async is the biggest: CSP concurrency as a library, four years before JS got async/await.
+
+HONEST CAVEAT, know it before you say the kicker: C# shipped async/await in 2012, a year BEFORE core.async. The row compares against JavaScript, which is fair and is why it's written that way — but if someone raises C#, concede it immediately. The claim is not that Clojure is always first; it's that Clojure never needed a compiler release. That's the half of the kicker that always holds.
+
+If someone pushes back that a library can't match compiler support — fair, and the answer is tooling: a compiler knows about try-with-resources, so it can error-check it. That trade is real. It's also why (source with-open) mattered: nothing is hidden, so you debug a macro the way you debug code.
+
+Optional fourth row if you want it: pattern matching (C# 8 · 2019, Java 21 · 2023) against core.match — confirm its first-release year before it goes on the slide.
 -->
 
 ---
