@@ -313,11 +313,15 @@
 /* The verdict itself: three stacked pairs on the title's left rail —
    mono tick above, the word at display scale. Deliberately the largest
    type on the slide; this is where the values act cashes out. */
-/* Thesis slide: one row per feature — how it arrived elsewhere, what it is
-   here. Read down the left and it's version numbers you waited for; down the
-   right it's names you type, with earlier dates. The asymmetry IS the claim,
-   so years get their own quiet tier rather than competing with the names. */
-.slidev-layout .feature-rows {
+
+/* Two slides read as one system — the thesis and the adoption reprise both
+   use a three-column keyword grid: the thing they already have a name for,
+   the Clojure name, then the short list that matters. Only the column roles
+   differ, so the grid itself is shared.
+   NB: never leave blank lines between rows in the markdown — markdown-it
+   wraps them in <p> and the grid collapses into one running line. */
+.slidev-layout .feature-rows,
+.slidev-layout .host-rows {
   display: grid;
   grid-template-columns: max-content max-content 1fr;
   column-gap: 2.4em;
@@ -325,21 +329,30 @@
   align-items: baseline;
   margin-top: 2em;
 }
-.slidev-layout .feature-rows .span-2 { grid-column: span 2; }
-.slidev-layout .feature-rows .power-label { margin-bottom: 0.45rem; }
-.slidev-layout .feature-rows .feat {
+.slidev-layout .feature-rows .span-2,
+.slidev-layout .host-rows .span-2 { grid-column: span 2; }
+.slidev-layout .feature-rows .power-label,
+.slidev-layout .host-rows .power-label { margin-bottom: 0.45rem; }
+/* Anchor column: the name they walked in with */
+.slidev-layout .feature-rows .feat,
+.slidev-layout .host-rows .host {
   font-size: 1.3rem;
   font-weight: var(--font-weight-heading);
   color: var(--color-text-primary);
 }
-.slidev-layout .feature-rows .prov {
-  font-size: 1.05rem;
-  color: var(--color-text-secondary);
-}
-.slidev-layout .feature-rows .clj {
+/* The green tier: the name you'd actually type. The thesis slide puts it
+   last as the punchline; the reprise puts it middle as the entry point. */
+.slidev-layout .feature-rows .clj,
+.slidev-layout .host-rows .runtime {
   font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
   font-size: 1.2rem;
   color: var(--color-brand-text-primary);
+}
+/* Supporting detail, kept to keywords and separated by middots */
+.slidev-layout .feature-rows .prov,
+.slidev-layout .host-rows .carries {
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
 }
 /* Dates read as a rhythm across both halves, never as content */
 .slidev-layout .feature-rows .yr {

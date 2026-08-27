@@ -650,7 +650,7 @@ Optional fourth row if you want it: pattern matching (C# 8 · 2019, Java 21 · 2
 
 <div class="eyebrow">IN PRACTICE</div>
 
-## Where this bites, in practice
+## What this means, in practice
 
 <div class="cols" style="margin-top:2.4em; gap:2.5rem;">
   <div>
@@ -726,20 +726,17 @@ Echo of the thesis slide: language features are libraries, and libraries take da
 
 ## <span class="green">Hosted</span>, cashed out
 
-<p class="muted">The hosts from the opening — this time read from the stack you already run.</p>
-
-<div class="lang-rows" style="margin-top:1.8em; row-gap:0.7em;">
-  <span class="lang ink">Java</span><span class="muted">call any JVM library, deploy a jar, keep your profilers and your ops</span>
-  <span class="lang ink">JavaScript</span><span class="muted">ClojureScript compiles to JS — runs in the browser, React through Reagent</span>
-  <span class="lang ink">C#</span><span class="muted">ClojureCLR runs on .NET — same language, full CLR interop</span>
-  <span class="lang ink">C++</span><span class="muted">jank runs on LLVM — near-native performance, easy C bindings</span>
-  <span class="lang ink">Shell</span><span class="muted">Babashka — Clojure scripts with instant startup</span>
+<div class="host-rows">
+  <span class="power-label">YOUR STACK</span><span class="power-label">YOUR ENTRY POINT</span><span class="power-label">WHAT COMES WITH IT</span>
+  <span class="host">Java</span><span class="runtime">Clojure</span><span class="carries">any Maven jar · your profilers · your ops</span>
+  <span class="host">JavaScript</span><span class="runtime">ClojureScript</span><span class="carries">the browser · React via Reagent</span>
+  <span class="host">C#</span><span class="runtime">ClojureCLR</span><span class="carries">every .NET assembly</span>
+  <span class="host">C++</span><span class="runtime">jank</span><span class="carries">LLVM · near-native · C bindings</span>
+  <span class="host">Shell</span><span class="runtime">Babashka</span><span class="carries">instant startup</span>
 </div>
 
-<p v-click style="margin-top:2.2em;">Curiosity is low-risk: a library, a script, a build tool — <span class="green">not a rewrite</span>.</p>
-
 <!--
-The reprise — say the callback OUT LOUD: "you saw this triple at the top of the hour as a design principle; here it is as a risk assessment." Same facts, arrow reversed: the opening slide read Clojure → host, this one reads your stack → your entry point. Babashka earns its row for the shell-scripting crowd — Clojure with instant startup. jank is the newest host: Clojure on LLVM with seamless C/C++ interop — worth saying out loud that it's young (fresh out of alpha) while the other hosts are decades-proven. One beat: the kicker. The next two slides are the receipts: interop in both directions, in code.
+The subtitle is gone from the slide — it's your line now: "the hosts from the opening, this time read from the stack you already run." Then say the callback OUT LOUD: "you saw this triple at the top of the hour as a design principle; here it is as a risk assessment." Same facts, arrow reversed: the opening slide read Clojure → host, this one reads your stack → your entry point. Babashka earns its row for the shell-scripting crowd — Clojure with instant startup. jank is the newest host: Clojure on LLVM with seamless C/C++ interop — worth saying out loud that it's young (fresh out of alpha) while the other hosts are decades-proven. No beat on this slide — the kicker is your line now: curiosity is low-risk, a library or a script or a build tool, not a rewrite. The next two slides are the receipts: interop in both directions, in code.
 -->
 
 ---
@@ -761,8 +758,7 @@ The reprise — say the callback OUT LOUD: "you saw this triple at the top of th
 (-> date (.plusDays 4) .getDayOfWeek str)   ; => "FRIDAY"
 ```
 
-<p style="margin-top:1.2em;">No wrappers, no bindings, no marshalling — <span class="green">the dot is the whole FFI</span>.</p>
-<p class="muted">Every library on Maven Central is one <code>deps.edn</code> line away. Don’t port it — call it.</p>
+<p style="margin-top:1.2em;">No wrappers, no bindings, no marshalling — <span class="green">the dot is the whole interface</span>.</p>
 
 <!--
 Receipt #1 — the everyday direction. Say it: the dot IS the FFI. This is not a bindings layer; the compiler emits the same bytecode javac would (add a type hint and there's no reflection either). The .toUpperCase line is the "hosted" slide's claim made concrete — Clojure strings, numbers and collections ARE host objects, nothing crosses a boundary because there is no boundary. Bonus beats, verbal: Clojure fns implement Runnable and Callable, so you can hand one straight to an ExecutorService; and the threading macro from act two works on host calls too — interop code still reads like Clojure. If someone asks about the bare .getDayOfWeek in the thread: (-> x .foo) expands to (.foo x), parens are optional at arity 1.
