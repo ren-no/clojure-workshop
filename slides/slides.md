@@ -614,7 +614,7 @@ SWITCH 1 → editor. This slide stays parked if anyone glances back at the proje
 <span class="switch">→ to the REPL · session: macros</span>
 
 <!--
-SWITCH 2 → deck (this one slide, a breather after 25 min of demo), then SWITCH 3 → editor for workshop/macros.clj: first/eval, unless, build my->, macroexpand-1, (source ->). ~15–20 min.
+SWITCH 2 → deck (this one slide, a breather after 25 min of demo), then SWITCH 3 → editor for workshop/macros.clj: first/eval, unless, try-with, build my->, macroexpand-1, (source ->). ~15–20 min. try-with runs early on purpose — it's the beat for the Java half of the room. Running late, cut from the tail: my-some->, then with-timing.
 
 Say it, don’t read it: this is not text that LOOKS like a list — it IS a list, first element +, then 1, then 2. Nothing parses it into some other tree afterwards: the syntax tree is the syntax. That property has a name, homoiconicity — and it is the whole reason macros are ordinary code. Let’s use it.
 -->
@@ -644,7 +644,7 @@ Say it, don’t read it: this is not text that LOOKS like a list — it IS a lis
 - `core.async` added CSP concurrency **as a library**; async/await needed compiler releases elsewhere
 
 <!--
-The thesis slide of the whole talk. You just built my-> live; here's proof the real one is a page of userland Clojure. Be precise and generous about |> — definable in one line BECAUSE it's application; macros operate one level up.
+The thesis slide of the whole talk. You just built my-> live; here's proof the real one is a page of userland Clojure. Be precise and generous about |> — definable in one line BECAUSE it's application; macros operate one level up. Call back to try-with, which opened the REPL session: Java 7 needed new grammar, a new interface and a compiler release (JSR 334) to ship try-with-resources; with-open is ten lines in clojure/core.clj and you wrote your own in six. That was the receipt they felt; -> is the same claim about a feature they don't have at all.
 -->
 
 ---

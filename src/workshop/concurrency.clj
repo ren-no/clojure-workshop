@@ -13,8 +13,7 @@
 
 (comment
 
-  ;; Four threads, all consuming the SAME value. No locks,
-  ;; no copies — a value can't change, so there's nothing to guard.
+  ;; Four threads, one value. A value can't change, so nothing to guard.
   (mapv deref
         [(future (reduce + numbers))
          (future (apply max numbers))
@@ -29,13 +28,13 @@
 (def v [1 2 3])
 
 (comment
-  ;; Here we pass the same vector to two threads, both "mutates" the vector.
-  ;; Each thread gets a new value consistent with its own view of the world. No locks, no copies, no conflicts.
-  [@(future (concat v [4 5 6]))   ;; one thread's new value => (1 2 3 4 5 6)
-   @(future (rest v))]            ;; the other's new value  => (2 3)
 
-  ;; v is still exactly what it was, and the two threads never conflicted.
-  v
+  ;; Same vector, two threads, both "mutating" it. Each gets its own
+  ;; new value. No locks, no copies, no conflict.
+  [@(future (concat v [4 5 6]))
+   @(future (rest v))]
+
+  v                          ; still exactly what it was
   )
 
 ;; -----------------------------------------------------------------
@@ -50,8 +49,8 @@
 
 (comment
 
-  (time (doall (map  slow-square (range 8))))   ;; ~800 ms — one thread
-  (time (doall (pmap slow-square (range 8))))   ;; ~100 ms — change one letter
+  (time (doall (map  slow-square (range 8))))   ; one thread
+  (time (doall (pmap slow-square (range 8))))   ; change one letter
   )
 
 ;; -----------------------------------------------------------------
@@ -68,15 +67,16 @@
   (dotimes [_ 4]
     (future (dotimes [_ 1000000] (swap! counter inc))))
 
-  @counter   ;; eval repeatedly — watch it climb, every read consistent
-  ;; => 4000000 when done. Every run. No lost updates, no AtomicLong.
+  ;; Eval repeatedly — climbs, every read consistent, no lost updates.
+  ;; Same total every run, and no AtomicLong anywhere.
+  @counter
 
-  ;; Threads emitting values into shared state — same one-liner shape:
+  ;; Threads emitting into shared state — same one-liner shape:
   (def results (atom []))
   (dotimes [n 4]
     (future (swap! results conj (* n n))))
 
-  @results   ;; all four arrive: [0 1 4 9] — order varies run to run
+  @results                   ; all four arrive; order varies per run
   )
 
 ;; -----------------------------------------------------------------
@@ -96,8 +96,7 @@
     (future (dosync (alter alice - 1)
                     (alter bob   + 1))))
 
-  ;; Read BOTH in one transaction — a consistent pair at ANY moment:
+  ;; Read BOTH in one transaction — a consistent pair at ANY moment.
+  ;; Sums to 100 mid-flight, every time. No lock ordering — no locks.
   (dosync [@alice @bob])
-  ;; sums to 100 mid-flight, every time; => [0 100] when done.
-  ;; No deadlocks, no lock ordering — no locks.
   )

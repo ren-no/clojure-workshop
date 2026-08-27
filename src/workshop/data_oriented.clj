@@ -29,24 +29,20 @@
 
 (comment
 
-  ;; Get the first ticket
   (first tickets)
 
-  ;; a keyword looks itself up
-  (:status (first tickets))
+  (:status (first tickets))       ; a keyword looks itself up
 
   (map :assignee tickets)
   (distinct (map :assignee tickets))
 
-
-  ;; Destructuring — pattern-shaped access, F# folks will feel at home:
+  ;; Destructuring — F# folks will feel at home:
   (let [{:keys [id status assignee]} (first tickets)]
     (str "#" id " is " (name status) " (" assignee ")"))
 
-  (def my-filter (comp #{:open :blocked} :status))
-
   ;; Sets are predicates too:
-  (filter my-filter tickets) 
+  (def my-filter (comp #{:open :blocked} :status))
+  (filter my-filter tickets)
   )
 
 ;; -----------------------------------------------------------------
@@ -61,20 +57,18 @@
   (group-by :status tickets)
 
   (frequencies (map :priority tickets))
-  ;; => {:high 4, :low 3, :medium 3}
 
   (sort-by :hours > tickets)
 
   ;; Which tags show up most? (mapcat = flatMap/SelectMany/collect)
   (frequencies (mapcat :tags tickets))
 
-  ;; Total hours on open high-priority work — read it top to bottom:
+  ;; Open high-priority hours — read it top to bottom:
   (->> tickets
        (filter #(= :open (:status %)))
        (filter #(= :high (:priority %)))
        (map :hours)
        (reduce +))
-  ;; => 7.5
   )
 
 ;; -----------------------------------------------------------------
@@ -97,9 +91,8 @@
 
   (workload tickets)
 
-  ;; REPL workflow: change the fn above (say, add :top-priority),
-  ;; re-evaluate the defn, run again. No restart, no rebuild.
-  ;; The 'report' is itself just data — filter it, sort it, diff it:
+  ;; Change the fn above (add :top-priority), re-eval it, run again —
+  ;; no restart. The report is just data: filter, sort, diff it.
   (map :assignee (workload tickets))
   )
 

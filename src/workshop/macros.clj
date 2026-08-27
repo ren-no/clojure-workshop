@@ -15,56 +15,114 @@
 (comment
 
   (+ 1 2)
-  ;; => 3
+  '(+ 1 2)                 ; a LIST: symbol +, then 1, then 2
 
-  '(+ 1 2)
-  ;; => (+ 1 2)      a LIST whose first element is a symbol
+  (first '(+ 1 2))
+  (rest  '(+ 1 2))
+  (count '(+ 1 2))
 
-  (first '(+ 1 2))   ;; => +
-  (rest  '(+ 1 2))   ;; => (1 2)
-  (count '(+ 1 2))   ;; => 3
+  (eval (list + 1 2))      ; and back the other way
 
-  ;; And we can go the other way — build code with list, run it:
-  (eval (list + 1 2))
-  ;; => 3
-
-  ;; There is no separate AST. The syntax tree IS the syntax.
+  ;; No separate AST. The syntax tree IS the syntax.
   )
 
 ;; -----------------------------------------------------------------
 ;; 2. Warm-up macro: `unless`
-;;    Why can't this be a function? Because a function's arguments
-;;    are ALWAYS evaluated first. A macro controls evaluation.
 ;; -----------------------------------------------------------------
+;; A function's arguments are ALWAYS evaluated first. A macro's aren't.
 
 (defmacro unless
-  "Like if, but inverted. (unless test then else)"
+  "Like if, but inverted."
   [test then else]
   (list 'if test else then))
 
 (comment
 
-  (unless false :a :b)   ;; => :a
-  (unless true  :a :b)   ;; => :b
+  (unless false :a :b)
+  (unless true  :a :b)
 
-  ;; Proof that it just rewrites code before evaluation:
-  (macroexpand-1 '(unless false :a :b))
-  ;; => (if false :b :a)
+  (macroexpand-1 '(unless false :a :b))    ; just rewritten code
 
   ;; The function version can't short-circuit:
   (defn unless-fn [test then else] (if test else then))
-  (unless    false :ok (println "side effect!"))   ;; prints nothing
-  (unless-fn false :ok (println "side effect!"))   ;; prints!
+  (unless    false :ok (println "side effect!"))
+  (unless-fn false :ok (println "side effect!"))
   )
 
 ;; -----------------------------------------------------------------
-;; 3. The main event: build the threading macro ourselves
+;; 3. A feature they know by name: try-with-resources
 ;; -----------------------------------------------------------------
-;; Goal:  (my-> 5 inc (* 2) str)
-;;   ==>  (str (* (inc 5) 2))
+;; Java 7 shipped it as a LANGUAGE change: new grammar, AutoCloseable,
+;; a compiler release (JSR 334). C# needed `using`. Here it's six lines.
 ;;
-;; A macro is just a function from code (data) to code (data).
-;; So we can write it with... reduce.
+;;   try (var r = open()) {          (try-with [r (open)]
+;;     use(r);                         (use r))
+;;   }
+
+;; Prints when closed, so the demo is visible.
+(defn fake-resource [nm]
+  (reify java.io.Closeable
+    (close [_] (println "  closed:" nm))))
+
+(defmacro try-with
+  "Bind sym to a resource, run body, close it no matter what."
+  [[sym init] & body]
+  `(let [~sym ~init]
+     (try
+       ~@body
+       (finally (.close ~sym)))))
+
+(comment
+
+  (macroexpand-1 '(try-with [r (fake-resource "db")] (query r)))
+
+  (try-with [r (fake-resource "db")]
+            (Thread/sleep 1000)
+            (println "  using it")
+            :result)
+
+  ;; finally still runs on the way out — the guarantee Java gives:
+  (try
+    (try-with [r (fake-resource "db")]
+              (throw (ex-info "boom" {})))
+    (catch Exception e (ex-message e)))
+
+  ;; Core already has it — a macro, not a keyword. Recursion over
+  ;; `bindings` is all ours lacks: many resources, closed in reverse.
+  (source with-open)
+
+  (with-open [a (fake-resource "a")
+              b (fake-resource "b")]
+    :done)
+
+  ;; `.close` was never special. Same shape around a timer:
+  )
+
+(defmacro with-timing [label & body]
+  `(let [start# (System/nanoTime)]                 ; start# — auto-gensym
+     (try
+       ~@body
+       (finally
+         (println (format "%s took %.2f ms" ~label
+                          (/ (- (System/nanoTime) start#) 1e6)))))))
+
+(comment
+
+  (with-timing "sum" (reduce + (range 1e6)))
+  )
+
+;; If asked "couldn't that be a function?" — yes. Take the body as a
+;; thunk and it works, several resources and all. unless, try-with and
+;; with-timing are all deferral, and thunks buy deferral back; the
+;; macro just saves you writing them. Section 4 is the other kind.
+
+;; -----------------------------------------------------------------
+;; 4. The main event: build the threading macro ourselves
+;; -----------------------------------------------------------------
+;; Goal:  (my-> 5 inc (* 2) str)  ==>  (str (* (inc 5) 2))
+;;
+;; A macro is a function from code to code. So: reduce.
+;; This rewrites the source form — no function can reach that.
 
 (defmacro my->
   "Thread x through forms, inserting it as the FIRST argument."
@@ -79,52 +137,41 @@
 (comment
 
   (my-> 5 inc (* 2) str)
-  ;; => "12"
 
-  ;; Watch the rewriting happen — this is the money shot:
-  (macroexpand-1 '(my-> 5 inc (* 2) str))
-  ;; => (str (* (inc 5) 2))
+  (macroexpand-1 '(my-> 5 inc (* 2) str))   ; the money shot
 
-  ;; It threads into ARBITRARY forms, first position:
-  (my-> {:a 1}
+  (my-> {:a 1}                              ; threads into arbitrary forms
         (assoc :b 2)
         (update :a inc)
         keys)
-  ;; => (:a :b)
 
-  ;; Now the reveal — the REAL one is barely different:
+  ;; Same move as with-open, one level up — the real one is barely
+  ;; different. So are these. Most of Clojure is written in Clojure.
   (source ->)
-  ;; ...a page of userland Clojure, sitting in clojure/core.clj.
-  ;; So are these:
   (source when)
   (source cond)
-  ;; Most of Clojure is written in Clojure.
   )
 
 ;; -----------------------------------------------------------------
-;; 4. Beyond function application: some-> controls EVALUATION
+;; 5. Beyond function application: some-> controls EVALUATION
 ;; -----------------------------------------------------------------
-;; F#'s |> is definable in one line — because it's function
-;; application:   let (|>) x f = f x
-;; But no function/operator can decide NOT to evaluate its argument.
-;; some-> stops the pipeline at the first nil (think ?. in TS/C#,
-;; but userland, and for whole pipelines):
+;; F#'s |> is one line BECAUSE it's application:  let (|>) x f = f x
+;; some-> stops at the first nil — ?. in TS/C#, but userland, and for
+;; whole pipelines.
 
 (comment
 
   (some-> {:user {:address {:zip "0150"}}}
           :user :address :zip clojure.string/upper-case)
-  ;; => "0150"
 
-  (some-> {:user {}}
+  (some-> {:user {}}                        ; never calls upper-case
           :user :address :zip clojure.string/upper-case)
-  ;; => nil          (never calls upper-case — no NPE)
 
   (source some->)
   )
 
 ;; -----------------------------------------------------------------
-;; 5. (Bonus, if time allows) our own nil-safe threading
+;; 6. (Bonus, if time allows) our own nil-safe threading
 ;; -----------------------------------------------------------------
 
 (defmacro my-some->
@@ -142,9 +189,9 @@
 
 (comment
 
-  (my-some-> {:a {:b 1}} :a :b inc)   ;; => 2
-  (my-some-> {:a nil}    :a :b inc)   ;; => nil, no explosion
-  
+  (my-some-> {:a {:b 1}} :a :b inc)
+  (my-some-> {:a nil}    :a :b inc)         ; nil, no explosion
+
   (pprint/pprint (macroexpand-all '(my-some-> {:a {:b 1}} :a :b inc)))
   )
 
