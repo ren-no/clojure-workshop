@@ -2,7 +2,8 @@
   "Session 1b — Data-oriented programming (~15 min).
 
   One small vocabulary of functions, one universal data
-  representation. No DTOs, no mappers, no TicketSummaryBuilder.")
+  representation. No DTOs, no mappers, no TicketSummaryBuilder."
+  (:require [clojure.repl :as repl]))
 
 ;; -----------------------------------------------------------------
 ;; The dataset: support tickets, as plain data.
@@ -36,14 +37,16 @@
 
   (map :assignee tickets)
   (distinct (map :assignee tickets))
-  
+
 
   ;; Destructuring — pattern-shaped access, F# folks will feel at home:
   (let [{:keys [id status assignee]} (first tickets)]
     (str "#" id " is " (name status) " (" assignee ")"))
 
+  (def my-filter (comp #{:open :blocked} :status))
+
   ;; Sets are predicates too:
-  (filter (comp #{:open :blocked} :status) tickets)
+  (filter my-filter tickets) 
   )
 
 ;; -----------------------------------------------------------------

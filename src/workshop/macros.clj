@@ -4,7 +4,9 @@
   Arc: code IS a data structure
     -> so ordinary functions can transform code
     -> so language features are libraries."
-  (:require [clojure.repl :refer [source doc]]))
+  (:require [clojure.repl :refer [source doc]]
+            [clojure.walk :refer [macroexpand-all]]
+            [clojure.pprint :as pprint]))
 
 ;; -----------------------------------------------------------------
 ;; 1. Code is data. Literally.
@@ -142,8 +144,8 @@
 
   (my-some-> {:a {:b 1}} :a :b inc)   ;; => 2
   (my-some-> {:a nil}    :a :b inc)   ;; => nil, no explosion
-
-  (macroexpand-1 '(my-some-> m :a :b))
+  
+  (pprint/pprint (macroexpand-all '(my-some-> {:a {:b 1}} :a :b inc)))
   )
 
 ;; -----------------------------------------------------------------
