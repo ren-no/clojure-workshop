@@ -131,7 +131,7 @@ Slide 2 was JS, this one is Java on purpose — same disease, second language, s
         <line x1="450" y1="124" x2="450" y2="148" stroke="#19547D" stroke-width="1.5"/>
         <line x1="750" y1="124" x2="750" y2="148" stroke="#017E5B" stroke-width="1.5"/>
         <text x="450" y="176" text-anchor="middle" fill="#19547D">OCaml → F# · Haskell · Scala</text>
-        <text x="750" y="176" text-anchor="middle" fill="#017E5B">Scheme · Common Lisp · Clojure</text>
+        <text x="750" y="176" text-anchor="middle" fill="#017E5B">Scheme · Common Lisp · Clojure (2007)</text>
       </g>
     </g>
   </g>
