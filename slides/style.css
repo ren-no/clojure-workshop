@@ -96,6 +96,23 @@
 .slidev-layout .cols.eq-code .slidev-code-wrapper { flex: 1; display: flex; }
 .slidev-layout .cols.eq-code .slidev-code-wrapper .slidev-code { flex: 1; width: 100%; }
 
+/* Syntax primer: three code panels sharing one grid cell — a click cross-fades
+   the next in place. Panels stretch to the tallest variant so the dark box
+   never resizes or moves while the code inside swaps. */
+.slidev-layout .code-swap {
+  display: grid;
+  max-width: 46rem;
+  /* Slidev sizes code off these vars, and its rule outranks a plain
+     font-size here — set the var, not the property. */
+  --slidev-code-font-size: 1.3rem;
+  --slidev-code-line-height: 1.5;
+}
+.slidev-layout .code-swap > div { grid-area: 1 / 1; min-width: 0; display: flex; }
+.slidev-layout .code-swap .slidev-code-wrapper { flex: 1; display: flex; }
+/* One panel per slide, so the code carries near-body-text size — the back row
+   reads it. Widest line (~53 chars) still clears the max-width above. */
+.slidev-layout .code-swap .slidev-code-wrapper .slidev-code { flex: 1; width: 100%; }
+
 /* Two traditions: centered columns under the family tree — the tree names
    the traditions; each column is colored key phrase > muted detail > motto */
 .traditions { text-align: center; margin-top: 0.3rem; }
@@ -110,11 +127,21 @@
   font-style: italic;
   margin-top: 0.5rem;
 }
-/* Backdrop column (the imperative branch): whole block one step
-   quieter than .muted, matching the gray tree above it */
-.slidev-layout .traditions .dim h3,
-.slidev-layout .traditions .dim .detail,
-.slidev-layout .traditions .dim .motto { color: var(--color-grey-600); }
+/* Two traditions: one formalism at a time. The other branch stays on
+   screen — two equal roots is the whole point — but recedes far enough
+   that the room reads only one per beat. The Turing side is live while its
+   tape runs; the λ side takes over when the factorial unfolds and keeps it.
+   Opacity is the only mechanism here, so no element is dimmed twice. */
+.slidev-layout .branch { transition: opacity 450ms ease; }
+/* Waiting its turn, or just handed over: a ghost. */
+.slidev-layout .branch-quiet { opacity: 0.28; }
+/* Backdrop once the histories land — the imperative row is still spoken
+   aloud ("C, Java, everything you grew up in"), so it has to stay legible.
+   Lands at about grey-600, which is where this row used to sit. */
+.slidev-layout .branch-back { opacity: 0.5; }
+@media (prefers-reduced-motion: reduce) {
+  .slidev-layout .branch { transition: none; }
+}
 /* Staging grid: column 1 sits under the Turing root (centered at 1/6 of the
    tree), the 2-col span under the λ root (centered at 4/6). Each .swap cell
    stacks a root's primitives over the tradition column that replaces them
@@ -267,3 +294,120 @@
   font-size: 0.75rem;
   color: var(--color-text-secondary);
 }
+
+/* Payoff swap ("Updates return new values"): the code panel and the verdict
+   share one grid cell, so the click lands the verdict exactly where the
+   evidence stood — the title never moves, and the words inherit the code
+   panel's footprint instead of floating in a half-empty frame. */
+.slidev-layout .beat-swap {
+  display: grid;
+  align-items: center;
+  /* One panel per state, so the code carries near-body-text size — the back
+     row reads it, and the evidence keeps enough mass to hold the frame.
+     Slidev sizes code off these vars, not a plain font-size. */
+  --slidev-code-font-size: 1.1rem;
+  --slidev-code-line-height: 1.5;
+}
+.slidev-layout .beat-swap > div { grid-area: 1 / 1; min-width: 0; }
+
+/* The verdict itself: three stacked pairs on the title's left rail —
+   mono tick above, the word at display scale. Deliberately the largest
+   type on the slide; this is where the values act cashes out. */
+.slidev-layout .verdict { display: flex; flex-direction: column; gap: 0.95rem; }
+.slidev-layout .verdict .power-label { margin-bottom: 0.1rem; }
+.slidev-layout .verdict-word {
+  font-weight: var(--font-weight-heading);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  /* em-relative, so the label sits the same optical distance above every
+     word however large it is */
+  margin: -0.1em 0 0;
+}
+/* The words grow as the claim does: free → fearless → impossible. The type
+   scale IS the crescendo, so the block widens toward the last line — but it
+   tops out near the h2, so the heading still reads as the slide's voice.
+   At this scale the stack is the same height as the code panel it replaces.
+   Labels stay a constant quiet rail against it. */
+.slidev-layout .verdict > div:nth-child(1) .verdict-word { font-size: 2.3rem; }
+.slidev-layout .verdict > div:nth-child(2) .verdict-word { font-size: 3rem; }
+.slidev-layout .verdict > div:nth-child(3) .verdict-word { font-size: 3.9rem; }
+
+/* Each pair enters on its own click — the presenter lands one word at a
+   time. Hidden rows keep their space, so nothing reflows as they arrive. */
+.slidev-layout .verdict > div {
+  transition: opacity 320ms ease, transform 320ms ease;
+}
+.slidev-layout .verdict > div.slidev-vclick-hidden { transform: translateY(0.3em); }
+@media (prefers-reduced-motion: reduce) {
+  .slidev-layout .verdict > div { transition: opacity 120ms linear; }
+  .slidev-layout .verdict > div.slidev-vclick-hidden { transform: none; }
+}
+
+/* Structural sharing: the diagram carries the whole slide, so it runs the
+   full content width — the viewBox is cut to the space left under the
+   heading (~2.57:1) so the tree scales up without cropping. */
+.slidev-layout .sharing-svg { display: block; width: 100%; }
+/* The pointers back into v draw themselves once on reveal, so the click
+   reads as v2 reaching into the old tree rather than a second picture
+   appearing next to it. */
+.sharing-svg .share-link { stroke-dasharray: 7 6; }
+/* Gated on .slidev-vclick-current, not :not(.slidev-vclick-hidden) — the
+   hidden class lands a tick after mount, so the negated form fires the
+   animation once at slide load, before anyone has clicked. */
+.sharing-svg g.slidev-vclick-current .share-link {
+  animation: share-reach 600ms ease-out both;
+}
+@keyframes share-reach {
+  from { stroke-dashoffset: 130; }
+  to   { stroke-dashoffset: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sharing-svg g.slidev-vclick-current .share-link { animation: none; }
+}
+
+/* "Code is data": the form itself is the evidence, so it runs at display
+   scale and gets annotated in place rather than explained in a paragraph.
+   One grid, two rows — glyphs on top, a quiet mono tick centered under each
+   element — so "a list of three" is shown, not asserted. */
+.slidev-layout .form-anat {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  justify-content: start;
+  align-content: center;
+  column-gap: 0.9rem;
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+  font-feature-settings: "calt" 0, "liga" 0;
+}
+.slidev-layout .form-anat .glyph {
+  font-size: 3.6rem;
+  line-height: 1;
+  text-align: center;
+}
+/* Optical alignment, both axes. Left: a 3.6rem mono "(" carries ~15px of side
+   bearing inside its cell, so box-aligning it with the heading leaves it
+   visibly indented — pull it back onto the heading's ink edge. Top: the tick
+   row hangs below the form, so centering the whole block would float the
+   glyph line above the verdict beside it; the offset lands the glyph row on
+   the verdict's optical center instead. */
+.slidev-layout .form-anat {
+  position: relative;
+  left: -0.6rem;
+  top: 1rem;
+}
+/* Parens carry the brand green: at this size they read as the list itself,
+   with the three elements sitting in ink inside them. */
+.slidev-layout .form-anat .paren { color: var(--color-brand-text-primary); }
+.slidev-layout .form-anat .tick {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-top: 0.7rem;
+}
+/* The pair sits on one optical line, and the verdict words hold the right
+   rail: "Homoiconicity" is long, so it takes a notch off the shared scale. */
+.slidev-layout .homoicon { align-items: center; gap: 4.5rem; margin-top: 1.4rem; }
+/* Content-width columns: the form and the verdict sit as one centered pair,
+   left rail under the heading, instead of each floating in half a slide. */
+.slidev-layout .homoicon > div { flex: 0 0 auto; }
+.slidev-layout .homoicon .verdict > div:nth-child(2) .verdict-word { font-size: 2.9rem; }

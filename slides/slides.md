@@ -45,11 +45,8 @@ const config = { retries: 3, timeout: 3000 };
 
 console.log(config);
 
-// ...somewhere in code far away a tweak was added:
 config.timeout = 60000;
 ```
-
-<p class="muted">Now expand the logged object in DevTools:</p>
 
 <v-click>
 
@@ -71,16 +68,18 @@ Demo live: paste examples/console_lies.js into a BROWSER console — not Node (N
 ## The healthcheck that hangs
 
 ```java
+class Client {
+  public string fetchDashboard(RequestConfig config) {
+    config.setTimeout(60000);
+    // Lots of code
+    return this.fetch(payload, config)
+  }
+}
+
 var config = new RequestConfig(3, 3000);   // retries, timeout
-
-client.fetchDashboard(config);    // slow endpoint — works fine
-
-client.fetchHealthcheck(config);  // ?! now takes 60 s to fail
+client.fetchDashboard(config);
+client.fetchHealthcheck(config); // Woops, times out only after 60000 seconds
 ```
-
-<p class="muted">Buried in <code>fetchDashboard</code>: <code>config.setTimeout(60000)</code> — the signature never said a word.</p>
-
-How do we defend against these problems? <span class="muted">…and what if this bug category couldn’t exist?</span>
 
 <!--
 Slide 2 was JS, this one is Java on purpose — same disease, second language, so nobody files it under "JS footguns". Say it: C#, Kotlin, Python read identically. Deliberately no implementation shown — that IS the point: passing an object hands out write access, and neither the name nor the types warn you. Now open it to the room: defensive copies at every boundary, unmodifiable wrappers (shallow, and they throw at runtime instead of preventing), records (only if EVERYTHING nested is a record too), discipline and code review. Every answer is a tax. Close with the italic question — that's the promise of the talk.
@@ -94,43 +93,52 @@ Slide 2 was JS, this one is Java on purpose — same disease, second language, s
 
 <svg viewBox="0 0 900 200" style="width:100%; margin-bottom:0.4em;">
   <g style="font-size:17px" fill="#142B2F">
-    <g :fill="$clicks >= 2 ? '#60757A' : '#142B2F'" style="transition: fill 0.4s">
-      <rect x="15" y="8" width="270" height="38" rx="8" fill="none" :stroke="$clicks >= 2 ? '#D8E5E7' : '#BECACD'" style="transition: stroke 0.4s" stroke-width="1.5"/>
+    <!-- Turing branch: ink on its own beats — the tape, then its own line of
+         descent — quiet while λ has the floor, backdrop once λ forks.
+         One class does all the receding, so nothing is dimmed twice; every
+         colour in here is the normal ink. -->
+    <g class="branch" :class="$clicks >= 3 ? 'branch-back' : ($clicks === 1 ? 'branch-quiet' : '')">
+      <rect x="15" y="8" width="270" height="38" rx="8" fill="none" stroke="#BECACD" stroke-width="1.5"/>
       <text x="150" y="32" text-anchor="middle">Turing machine (1936) — Turing</text>
       <g v-click.hide="2" transform="translate(20, 66)">
         <TuringTape :running="$clicks < 1" />
       </g>
-      <g v-click="2" fill="#60757A">
-        <line x1="150" y1="46" x2="150" y2="82" stroke="#D8E5E7" stroke-width="1.5"/>
-        <rect x="35" y="86" width="230" height="38" rx="8" fill="none" stroke="#D8E5E7" stroke-width="1.5"/>
+      <g v-click="2">
+        <line x1="150" y1="46" x2="150" y2="82" stroke="#BECACD" stroke-width="1.5"/>
+        <rect x="35" y="86" width="230" height="38" rx="8" fill="none" stroke="#BECACD" stroke-width="1.5"/>
         <text x="150" y="110" text-anchor="middle">Fortran (1957) — Backus</text>
-        <line x1="150" y1="124" x2="150" y2="148" stroke="#D8E5E7" stroke-width="1.5"/>
+        <line x1="150" y1="124" x2="150" y2="148" stroke="#BECACD" stroke-width="1.5"/>
         <text x="150" y="176" text-anchor="middle">C · Java · C# · Python · JS</text>
       </g>
     </g>
-    <line x1="300" y1="10" x2="300" y2="192" stroke="#D8E5E7" stroke-width="1.5" stroke-dasharray="3 7"/>
-    <rect x="465" y="8" width="270" height="38" rx="8" fill="none" stroke="#BECACD" stroke-width="1.5"/>
-    <text x="600" y="32" text-anchor="middle">λ-calculus (1930s) — Church</text>
-    <g v-click.hide="2" transform="translate(475, 90)">
-      <LambdaFactorial :running="$clicks === 1" />
-    </g>
-    <g v-click="2">
-      <line x1="550" y1="46" x2="450" y2="82" stroke="#19547D" stroke-width="1.5"/>
-      <line x1="650" y1="46" x2="750" y2="82" stroke="#017E5B" stroke-width="1.5"/>
-      <rect x="345" y="86" width="210" height="38" rx="8" fill="none" stroke="#19547D" stroke-width="1.5"/>
-      <text x="450" y="110" text-anchor="middle">ML (1973) — Milner</text>
-      <rect x="640" y="86" width="220" height="38" rx="8" fill="none" stroke="#017E5B" stroke-width="1.5"/>
-      <text x="750" y="110" text-anchor="middle">Lisp (1958) — McCarthy</text>
-      <line x1="450" y1="124" x2="450" y2="148" stroke="#19547D" stroke-width="1.5"/>
-      <line x1="750" y1="124" x2="750" y2="148" stroke="#017E5B" stroke-width="1.5"/>
-      <text x="450" y="176" text-anchor="middle" fill="#19547D">OCaml → F# · Haskell · Scala</text>
-      <text x="750" y="176" text-anchor="middle" fill="#017E5B">Scheme · Common Lisp · Clojure</text>
+    <line x1="310" y1="10" x2="310" y2="192" stroke="#D8E5E7" stroke-width="1.5" stroke-dasharray="3 7"/>
+    <!-- λ branch: on screen from the start — the room needs to see there are
+         two roots — but only ink on its own beats: the factorial unfold, and
+         the fork into ML and Lisp on the last click. -->
+    <g class="branch" :class="($clicks === 1 || $clicks >= 3) ? '' : 'branch-quiet'">
+      <rect x="465" y="8" width="270" height="38" rx="8" fill="none" stroke="#BECACD" stroke-width="1.5"/>
+      <text x="600" y="32" text-anchor="middle">λ-calculus (1930s) — Church</text>
+      <g v-click.hide="3" transform="translate(475, 90)">
+        <LambdaFactorial :running="$clicks === 1" />
+      </g>
+      <g v-click="3">
+        <line x1="550" y1="46" x2="450" y2="82" stroke="#19547D" stroke-width="1.5"/>
+        <line x1="650" y1="46" x2="750" y2="82" stroke="#017E5B" stroke-width="1.5"/>
+        <rect x="345" y="86" width="210" height="38" rx="8" fill="none" stroke="#19547D" stroke-width="1.5"/>
+        <text x="450" y="110" text-anchor="middle">ML (1973) — Milner</text>
+        <rect x="640" y="86" width="220" height="38" rx="8" fill="none" stroke="#017E5B" stroke-width="1.5"/>
+        <text x="750" y="110" text-anchor="middle">Lisp (1958) — McCarthy</text>
+        <line x1="450" y1="124" x2="450" y2="148" stroke="#19547D" stroke-width="1.5"/>
+        <line x1="750" y1="124" x2="750" y2="148" stroke="#017E5B" stroke-width="1.5"/>
+        <text x="450" y="176" text-anchor="middle" fill="#19547D">OCaml → F# · Haskell · Scala</text>
+        <text x="750" y="176" text-anchor="middle" fill="#017E5B">Scheme · Common Lisp · Clojure</text>
+      </g>
     </g>
   </g>
 </svg>
 
 <div class="traditions traditions-stage">
-  <div class="swap">
+  <div class="swap branch" :class="$clicks >= 3 ? 'branch-back' : ($clicks === 1 ? 'branch-quiet' : '')">
     <div v-click.hide="2">
       <div class="prims">
         <p class="prim"><strong>tape</strong> — cells of symbols</p>
@@ -139,14 +147,14 @@ Slide 2 was JS, this one is Java on purpose — same disease, second language, s
       </div>
       <p class="motto">Compute by overwriting memory</p>
     </div>
-    <div class="dim" v-click="2">
+    <div v-click="2">
       <h3>State as places</h3>
       <p class="detail">assignment · aliasing · defensive copies</p>
       <p class="motto">The default we all inherited</p>
     </div>
   </div>
-  <div class="swap span-2">
-    <div v-click.hide="2">
+  <div class="swap span-2 branch" :class="($clicks === 1 || $clicks >= 3) ? '' : 'branch-quiet'">
+    <div v-click.hide="3">
       <div class="prims">
         <p class="prim"><strong>variables</strong> — <code>x</code></p>
         <p class="prim"><strong>abstraction</strong> — <code>λx.e</code> — define a function</p>
@@ -154,7 +162,7 @@ Slide 2 was JS, this one is Java on purpose — same disease, second language, s
       </div>
       <p class="motto">Compute by evaluating expressions</p>
     </div>
-    <div class="cols-2" v-click="2">
+    <div class="cols-2" v-click="3">
       <div>
         <h3 class="blue">Types as proofs</h3>
         <p class="detail">inference · ADTs · exhaustive matching</p>
@@ -170,9 +178,10 @@ Slide 2 was JS, this one is Java on purpose — same disease, second language, s
 </div>
 
 <!--
-Beat 0 — two tiny formalisms, 1930s, before any computer exists. The tape machine runs while you talk Turing: a tape of cells, a head that reads/writes/moves, a finite rule table — compute by overwriting memory, step by step (the animation is literally doing it: walk, write a 1, walk back, erase).
-Click 1 — the machine parks, the λ side comes alive: three constructs, nothing else — a variable, defining a function, applying a function. The factorial unfold shows the third trick: no loops, a function applying itself — recursion. Provably equal in power (Church–Turing): two equal roots, opposite default moves.
-Click 2 — both roots cash out into history at once. Left: Fortran, then C, Java, everything the room grew up in — the root dims to gray on purpose, it becomes the backdrop; mutation isn't "how programming is", it's one of two traditions. Right: the λ root forks into two schools. What both λ branches inherit: functions are values (higher-order functions fall out for free), everything is an expression, closures, recursion instead of loops.
+Beat 0 — one formalism at a time. The λ side is on screen but ghosted, so don't talk about it yet; it's there only to promise a second root. The tape machine runs while you talk Turing: a tape of cells, a head that reads/writes/moves, a finite rule table — compute by overwriting memory, step by step (the animation is literally doing it: walk, write a 1, walk back, erase).
+Click 1 — the two sides trade places: the tape parks and recedes to a ghost, the λ side comes up to full ink and its factorial starts unfolding. Say "same power, opposite default move" on the handover. Three constructs, nothing else: three constructs, nothing else — a variable, defining a function, applying a function. The factorial unfold shows the third trick: no loops, a function applying itself — recursion. Provably equal in power (Church–Turing): two equal roots, opposite default moves.
+Click 2 — the Turing side comes back to full ink and cashes out alone: Fortran, then C, Java, C#, Python, JS — everything the room grew up in, one line of descent from a tape. Land the reframe here, with nothing on the right competing: mutation isn't "how programming is", it's one of two traditions.
+Click 3 — the λ root forks into two schools and takes the ink; the imperative line drops to a backdrop but stays readable, because the contrast IS the slide. What both λ branches inherit: functions are values (higher-order functions fall out for free), everything is an expression, closures, recursion instead of loops.
 Say it explicitly: "F# folks — you already know the blue column. Today is a guided tour of the green one." Mention Hindley–Milner verbally as the historical root; don't over-claim it for Scala (local inference, different type system).
 If asked: Lisp took the λ notation more than the theory — dynamic scope and broken closures until Scheme (1975) made a Lisp faithful to the calculus. And Backus, father of Fortran, used his 1977 Turing Award lecture to argue for abandoning his own branch: "Can Programming Be Liberated from the von Neumann Style?"
 JS (if someone objects — slide 2 was JS): the gray row sorts by default semantics, not ancestry. Eich was hired in 1995 to put Scheme in the browser; management demanded Java's syntax. The closures survived, the defaults didn't — objects are places you overwrite. Stronger point: every gray language has spent two decades importing λ features (Java 8 lambdas, C# LINQ, C++11 lambdas). Features crossed the tree; defaults never did. That's the wedge for this talk — Clojure flips the default.
@@ -196,8 +205,8 @@ The segue slide — and it defuses tribal readings: Clojure is not "team dynamic
 
 ## <span class="green">Immutable</span> by default
 
-<p class="muted">Persistent data structures — mapped out in ML-family research (Okasaki).<br>
-Identity as a <em>ref</em> to immutable values — inspired by SML’s <code>ref</code>.</p>
+<p class="muted">Persistent data structures — Okasaki<br>
+Identity as a <em>ref</em> to immutable values — SML’s <code>ref</code>.</p>
 
 <!--
 Beat 1: the heresy — a Lisp that refuses mutation. Say orally: classic Lisps mutate freely, so this is Hickey's break with his own family. Credit precisely: Okasaki's "Purely Functional Data Structures" (1998) mapped the persistent-structure space; Hickey's identity/state split ("Clojure's Approach to Identity and State") cites SML's ref as the inspiration for indirect references to immutable data. The concrete HAMT implementation is Bagwell's Ideal Hash Trees (EPFL) made persistent by Hickey — not ML research per se. Pays off later on the structural-sharing slide.
@@ -209,7 +218,7 @@ Beat 1: the heresy — a Lisp that refuses mutation. Say orally: classic Lisps m
 
 ## <span class="green">Lazy</span> evaluation
 
-<p class="muted">Inspired by Haskell — but just sequences, not everything.</p>
+<p class="muted">Inspired by Haskell — but just sequences</p>
 
 <!--
 Beat 2: laziness where it helps. Sequences can be infinite, production separated from consumption — but unlike Haskell, evaluation is otherwise eager and predictable.
@@ -236,7 +245,7 @@ Beat 2: laziness where it helps. Sequences can be infinite, production separated
   </div>
 </div>
 
-<p class="muted" style="margin-top:2.2em;">Host types are Clojure’s types — interop is a language feature, not an FFI.</p>
+<!-- <p class="muted" style="margin-top:2.2em;">Host types are Clojure’s types — interop is a language feature, not an FFI.</p> -->
 
 <!--
 Beat 3: pragmatism as a design decision. Open with the phrase "no private island" out loud — it came off the slide. Hickey's rationale: a new language island forfeits decades of libraries, GC and JIT work — hosting inherits them on day one. Strings ARE java.lang.String / JS strings; no marshalling layer. The triple lands per audience: JVM for the Javaists, JS for the TypeScripters, CLR for the F# crowd. Keep it at the principle here — the practical "keep your profilers, deploy a jar, npm" payoff belongs to the adoption slide near the end.
@@ -252,17 +261,12 @@ Beat 3: pragmatism as a design decision. Open with the phrase "no private island
   <div>
     <div class="power-label">ML</div>
     <p class="power blue">Exhaustive matching</p>
-    <p class="muted">The compiler catches the case you forgot.</p>
   </div>
   <div>
     <div class="power-label">LISP</div>
     <p class="power green">Everything is data</p>
-    <p class="muted">Maps, vectors — and the program itself.</p>
   </div>
 </div>
-
-<p style="margin-top:2.5em;">Today’s talk is a tour of the <span class="green">second superpower</span>.</p>
-
 <!--
 The credibility slide — say the trade-offs OUT LOUD, in both directions: Clojure will NOT give you exhaustiveness checking; typed languages can't treat the program as data without leaving the language (T4, source generators, Template Haskell…). "Everything is data" is the through-line of the talk: values and maps now, the program itself in act two — that's what makes macros possible. Foreshadows 0:50 so it lands as a payoff, not a pivot.
 -->
@@ -273,11 +277,9 @@ The credibility slide — say the trade-offs OUT LOUD, in both directions: Cloju
 
 ## <span class="blue">Place-oriented</span> programming
 
-<p class="muted">A variable or object property is a <em>place</em>.<br>
-A new value obliterates the old one.<br>
-A kilobytes-of-RAM constraint that never left.</p>
-
-<p style="margin-top:1.4em;">The lying log isn’t a bug — it’s the paradigm <span class="green">working as designed</span>.</p>
+<p class="muted">A variable is a <em>place</em><br>
+A new value obliterates the old one<br>
+A kilobytes-of-RAM constraint</p>
 
 <!--
 Hickey core: "The Value of Values". Say the arc verbally: a place = a memory address; overwriting made sense when RAM was measured in kilobytes; the constraint leaked into our program SEMANTICS and never left. Frame it as history, not blame — every language in the room inherited it. Kicker: the lying log and the hanging healthcheck are not coding errors — mutation at a distance is the paradigm doing exactly what it promises.
@@ -290,16 +292,14 @@ Hickey core: "The Value of Values". Say the arc verbally: a place = a memory add
 ## <span class="green">Value-oriented</span> programming
 
 <p class="muted">a fact at a point in time<br>
-accrete don't overwrite<br>
+accumulate don't overwrite<br>
 </p>
 
 <p>
-Values account for <em>time</em>; places erase it.
+Values account for <em>time</em>; places don't.
 </p>
 
 <p style="margin-top:1.4em;">
-integers and strings –
-ledgers, medical journals, git<br>
 <span class="green">In Clojure everything's a value</span></p>
 
 <!--
@@ -312,27 +312,18 @@ ledgers, medical journals, git<br>
 
 ## How to read Clojure
 
-<div class="cols" style="margin-top:1em;">
-<div>
+<div class="code-swap" style="margin-top:1.2em;">
 
-```js
-// JavaScript
-add(1, 2)
-```
-
-</div>
-<div>
+<div v-click.hide="1">
 
 ```clojure
-;; Clojure — the verb moves inside
-(add 1 2)
+add(1, 2)      ; JavaScript — the verb sits outside
+(add 1 2)      ; Clojure — the verb moves inside
 ```
 
 </div>
-</div>
 
-<div class="cols">
-<div>
+<div v-click="[1, 2]">
 
 ```clojure
 :timeout       ; keyword
@@ -343,7 +334,8 @@ add(1, 2)
 ```
 
 </div>
-<div>
+
+<div v-click="2">
 
 ```clojure
 ;; defining a function — params are a vector
@@ -354,12 +346,13 @@ add(1, 2)
 ```
 
 </div>
+
 </div>
 
-<p style="margin-top:1em;">Data literals + parentheses — <span class="green">that’s the whole syntax</span>.</p>
+<p style="margin-top:1.4em;">Data literals + parentheses — <span class="green">that’s the whole syntax</span>.</p>
 
 <!--
-30 seconds, not a lesson. The only move: the function name goes INSIDE the parens, first position. Everything else on screen is a data literal — and these exact literals carry the rest of the talk. No operators, no precedence, no statements-vs-expressions.
+30 seconds, not a lesson — three beats in ONE panel, each click replacing the last. Beat 1: the only move — the verb goes INSIDE the parens, first position; say the JS line out loud, then the Clojure one. Beat 2: the data literals, and these exact literals carry the rest of the talk — keyword, map, vector, set, and a list that is a function call. Beat 3: defn — params are a vector, the body is just another call. No operators, no precedence, no statements-vs-expressions.
 -->
 
 ---
@@ -368,29 +361,40 @@ add(1, 2)
 
 ## Identity vs equality — a false dilemma
 
-<div class="cols">
-<div>
+<div class="code-swap" style="margin-top:1.2em;">
+
+<div v-click.hide="1">
 
 ```js
-// JavaScript
+// JavaScript - true or false?
 {a: 1} === {a: 1}
 [1, 2, 3] === [1, 2, 3]
 ```
 
+</div>
+
+<div v-click="[1, 2]">
+
 ```java
-// Java
+// Java - true or false?
 var p1 = new Point(1, 2);
-p1.equals(new Point(1, 2))
+var p2 = new Point(1, 2);
+p1.equals(p2)
 ```
 
 </div>
-<div v-click>
+
+<div v-click="[2, 3]">
 
 ```clojure
-;; Clojure: equality IS identity
+;; Clojure
 (= {:a 1} {:a 1})          ; true
-(identical? {:a 1} {:a 1}) ; false — and nobody cares
+(identical? {:a 1} {:a 1}) ; false
 ```
+
+</div>
+
+<div v-click="3">
 
 ```clojure
 ;; Maps can even be KEYS in maps
@@ -399,18 +403,26 @@ p1.equals(new Point(1, 2))
 ```
 
 </div>
+
 </div>
 
 <!--
-Results are off the left column on purpose — ask the room to call each one: === false, false (everyone knows), then .equals(new Point(1,2))… also false! Object.equals defaults to reference identity; value equality means hand-writing equals/hashCode per class (records fix this for data carriers). Then click: the Clojure column answers.
-The "wait, what?" slide. Left column is the place-oriented world: JS === on structures, Java Object.equals defaulting to reference identity — value equality means hand-writing equals/hashCode per class (records fix this for data carriers; C# is the same story, records opt in). Right column: the identity/equality distinction is MANUFACTURED BY MUTATION (Baker's "egal", "Equal Rights for Functional Objects" 1993 — the paper behind Clojure's =). Pointer identity only matters because equal mutable objects can diverge later; for immutable values the distinction collapses — Clojure has identical? and idiomatic code never uses it. Bonus beats: = works across collection types — (= '(1 2 3) [1 2 3]) is true. Say verbally off the map-key example: values also live safely in SETS — #{{:host "web-1"} {:host "web-2"}} — while mutable HashMap keys on the JVM are a classic hazard (mutate → lose the entry).
+One panel, four beats — the room only ever has one thing to look at, and the results are deliberately missing so they have to call them.
+Beat 1 (JavaScript): ask the room — === on two structures: false, false. Everyone knows this one.
+Beat 2 (Java): and .equals(new Point(1, 2))… also false! Object.equals defaults to reference identity; value equality means hand-writing equals/hashCode per class (records fix this for data carriers; C# is the same story, records opt in). Let that land before clicking.
+Beat 3: Clojure answers. The identity/equality distinction is MANUFACTURED BY MUTATION (Baker's "egal", "Equal Rights for Functional Objects" 1993 — the paper behind Clojure's =). Pointer identity only matters because equal mutable objects can diverge later; for immutable values the distinction collapses — Clojure has identical? and idiomatic code never uses it. Bonus: = works across collection types — (= '(1 2 3) [1 2 3]) is true.
+Beat 4: maps as KEYS in maps — and say verbally that values also live safely in SETS — #{{:host "web-1"} {:host "web-2"}} — while mutable HashMap keys on the JVM are a classic hazard (mutate → lose the entry).
 -->
 
 ---
 
 <div class="eyebrow">VALUES</div>
 
-## “Updates” return new values
+## Updates return new values
+
+<div class="beat-swap">
+
+<div v-click.hide="1">
 
 ```clojure
 (def config {:retries 3 :timeout 5000})
@@ -421,22 +433,23 @@ batch-config  ; => {:retries 3, :timeout 60000}
 config        ; => {:retries 3, :timeout 5000}   ← untouched. Always.
 ```
 
-<div class="cols" style="margin-top:1.8em;">
-  <div>
+</div>
+
+<div class="verdict">
+  <div v-click="1">
     <div class="power-label">HISTORY</div>
-    <p class="power">Free</p>
-    <p class="muted">Old and new coexist — diffing is trivial.</p>
+    <p class="verdict-word">Free</p>
   </div>
-  <div>
+  <div v-click="2">
     <div class="power-label">SHARING</div>
-    <p class="power">Fearless</p>
-    <p class="muted">Nothing you hold can change under you.</p>
+    <p class="verdict-word">Fearless</p>
   </div>
-  <div>
+  <div v-click="3">
     <div class="power-label">MUTATION AT A DISTANCE</div>
-    <p class="power green">Impossible</p>
-    <p class="muted">No surprise mutations, no surprise state.</p>
+    <p class="verdict-word green">Impossible</p>
   </div>
+</div>
+
 </div>
 
 <!--
@@ -449,69 +462,58 @@ Callback to the hook (slides 2–3) — close the loop explicitly. Free · Fearl
 
 ## “Isn’t that slow?” — structural sharing
 
-<div class="cols">
-<div>
-
-<svg viewBox="0 0 460 260" style="width:100%;">
+<svg class="sharing-svg" viewBox="0 0 900 350">
   <defs>
-    <marker id="share-arrow" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto">
-      <path d="M0,0 L8,4 L0,8 Z" fill="#017E5B"/>
+    <marker id="share-arrow" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" refX="1" refY="5.5" orient="auto">
+      <path d="M0,0 L11,5.5 L0,11 Z" fill="#017E5B"/>
     </marker>
   </defs>
-  <g stroke-width="1.5" style="font-size:15px">
-    <!-- v: the old tree, never touched -->
-    <line x1="130" y1="40" x2="72"  y2="122" stroke="#BECACD"/>
-    <line x1="130" y1="40" x2="188" y2="122" stroke="#BECACD"/>
-    <line x1="72"  y1="122" x2="42"  y2="212" stroke="#BECACD"/>
-    <line x1="72"  y1="122" x2="102" y2="212" stroke="#BECACD"/>
-    <line x1="188" y1="122" x2="158" y2="212" stroke="#BECACD"/>
-    <line x1="188" y1="122" x2="218" y2="212" stroke="#BECACD"/>
-    <circle cx="130" cy="40"  r="17" fill="#fff" stroke="#60757A"/>
-    <circle cx="72"  cy="122" r="17" fill="#fff" stroke="#60757A"/>
-    <circle cx="188" cy="122" r="17" fill="#fff" stroke="#60757A"/>
-    <circle cx="42"  cy="212" r="17" fill="#fff" stroke="#60757A"/>
-    <circle cx="102" cy="212" r="17" fill="#fff" stroke="#60757A"/>
-    <circle cx="158" cy="212" r="17" fill="#fff" stroke="#60757A"/>
-    <circle cx="218" cy="212" r="17" fill="#fff" stroke="#60757A"/>
-    <text x="130" y="14" text-anchor="middle" fill="#60757A">v</text>
-    <text x="42"  y="217" text-anchor="middle" fill="#60757A">a</text>
-    <text x="102" y="217" text-anchor="middle" fill="#60757A">b</text>
-    <text x="158" y="217" text-anchor="middle" fill="#60757A">c</text>
-    <text x="218" y="217" text-anchor="middle" fill="#60757A">d</text>
-    <text x="42"  y="248" text-anchor="middle" fill="#BECACD" style="font-size:10px">0</text>
-    <text x="102" y="248" text-anchor="middle" fill="#BECACD" style="font-size:10px">1</text>
-    <text x="158" y="248" text-anchor="middle" fill="#BECACD" style="font-size:10px">2</text>
-    <text x="218" y="248" text-anchor="middle" fill="#60757A" style="font-size:10px">3</text>
-    <!-- v′: one new root→leaf path; dashed arrows = pointers back into v -->
-    <text x="330" y="14" text-anchor="middle" fill="#017E5B">v2 = (assoc v 3 x)</text>
+  <g stroke-width="2" style="font-size:18px">
+    <!-- v: the old tree, never touched. Leaves sit wide apart on purpose —
+         real persistent vectors are 32-way, not binary. -->
+    <line x1="315" y1="62"  x2="175" y2="176" stroke="#BECACD"/>
+    <line x1="315" y1="62"  x2="455" y2="176" stroke="#BECACD"/>
+    <line x1="175" y1="176" x2="105" y2="290" stroke="#BECACD"/>
+    <line x1="175" y1="176" x2="245" y2="290" stroke="#BECACD"/>
+    <line x1="455" y1="176" x2="385" y2="290" stroke="#BECACD"/>
+    <line x1="455" y1="176" x2="525" y2="290" stroke="#BECACD"/>
+    <circle cx="315" cy="62"  r="25" fill="#fff" stroke="#60757A"/>
+    <circle cx="175" cy="176" r="25" fill="#fff" stroke="#60757A"/>
+    <circle cx="455" cy="176" r="25" fill="#fff" stroke="#60757A"/>
+    <circle cx="105" cy="290" r="25" fill="#fff" stroke="#60757A"/>
+    <circle cx="245" cy="290" r="25" fill="#fff" stroke="#60757A"/>
+    <circle cx="385" cy="290" r="25" fill="#fff" stroke="#60757A"/>
+    <circle cx="525" cy="290" r="25" fill="#fff" stroke="#60757A"/>
+    <text x="315" y="22"  text-anchor="middle" fill="#60757A">v</text>
+    <text x="105" y="296" text-anchor="middle" fill="#60757A">a</text>
+    <text x="245" y="296" text-anchor="middle" fill="#60757A">b</text>
+    <text x="385" y="296" text-anchor="middle" fill="#60757A">c</text>
+    <text x="525" y="296" text-anchor="middle" fill="#60757A">d</text>
+    <text x="105" y="332" text-anchor="middle" fill="#BECACD" style="font-size:13px">0</text>
+    <text x="245" y="332" text-anchor="middle" fill="#BECACD" style="font-size:13px">1</text>
+    <text x="385" y="332" text-anchor="middle" fill="#BECACD" style="font-size:13px">2</text>
+    <text x="525" y="332" text-anchor="middle" fill="#60757A" style="font-size:13px">3</text>
+    <!-- v2: one new root→leaf path; dashed arrows = pointers back into v.
+         Both arrows clear every grey node by ~18 units at this scale. -->
+    <text x="700" y="22" text-anchor="middle" fill="#017E5B">v2 = (assoc v 3 x)</text>
     <g v-click>
-      <line x1="330" y1="40"  x2="330" y2="122" stroke="#017E5B"/>
-      <line x1="330" y1="122" x2="352" y2="212" stroke="#017E5B"/>
-      <line x1="330" y1="40"  x2="95"  y2="115" stroke="#017E5B" stroke-dasharray="5 4" marker-end="url(#share-arrow)"/>
-      <line x1="330" y1="122" x2="179" y2="201" stroke="#017E5B" stroke-dasharray="5 4" marker-end="url(#share-arrow)"/>
-      <circle cx="330" cy="40"  r="17" fill="#D1F7D2" stroke="#017E5B"/>
-      <circle cx="330" cy="122" r="17" fill="#D1F7D2" stroke="#017E5B"/>
-      <circle cx="352" cy="212" r="17" fill="#D1F7D2" stroke="#017E5B"/>
-      <text x="352" y="217" text-anchor="middle" fill="#017E5B">x</text>
-      <text x="352" y="248" text-anchor="middle" fill="#017E5B" style="font-size:10px">3</text>
+      <line x1="700" y1="62"  x2="740" y2="176" stroke="#017E5B"/>
+      <line x1="740" y1="176" x2="780" y2="290" stroke="#017E5B"/>
+      <line class="share-link" x1="700" y1="62"  x2="214" y2="167" stroke="#017E5B" marker-end="url(#share-arrow)"/>
+      <line class="share-link" x1="740" y1="176" x2="423" y2="278" stroke="#017E5B" marker-end="url(#share-arrow)"/>
+      <circle cx="700" cy="62"  r="25" fill="#D1F7D2" stroke="#017E5B"/>
+      <circle cx="740" cy="176" r="25" fill="#D1F7D2" stroke="#017E5B"/>
+      <circle cx="780" cy="290" r="25" fill="#D1F7D2" stroke="#017E5B"/>
+      <text x="780" y="296" text-anchor="middle" fill="#017E5B">x</text>
+      <text x="780" y="332" text-anchor="middle" fill="#017E5B" style="font-size:13px">3</text>
     </g>
   </g>
 </svg>
 
-<p v-after class="muted small">Three new nodes, total. The dashed arrows point back into v — everything else is shared.</p>
-
-</div>
-<div>
-
-- Persistent vectors are wide trees <span class="muted">(32-way tries)</span>
-- `assoc` copies ~log₃₂ n small nodes and **shares the rest**
-- 1M-element vector: full copy moves 10⁶ refs, `assoc` copies ~10² — **four orders of magnitude less work**
-
-</div>
-</div>
+<p v-after class="muted small">Three new nodes — everything else is shared.</p>
 
 <!--
-The slide the math/EE crowd enjoys most — immutability goes from virtue to engineering solution. Beat: v alone first ("we're about to assoc at slot 3"), one click drops in v′ — three green nodes, arrows into everything reused. log₃₂(10⁹) ≈ 6: effectively constant. Orally: on the wall clock that's ≈40 ms vs ≈0.01 ms for 1M elements — you'll prove the timings live in session 1.
+The slide the math/EE crowd enjoys most — immutability goes from virtue to engineering solution. The diagram carries it alone now, so these three facts are YOURS to say: (1) persistent vectors are wide trees — 32-way tries, drawn binary here to fit; (2) assoc copies ~log₃₂ n small nodes and shares the rest; (3) a 1M-element vector: a full copy moves 10⁶ refs, assoc copies ~10² — four orders of magnitude less work. Beat: v alone first ("we're about to assoc at slot 3"), one click drops in v2 — three green nodes, the dashed pointers reach back into everything reused. log₃₂(10⁹) ≈ 6: effectively constant. Orally: on the wall clock that's ≈40 ms vs ≈0.01 ms for 1M elements — you'll prove the timings live in session 1.
 -->
 
 ---
@@ -523,14 +525,12 @@ The slide the math/EE crowd enjoys most — immutability goes from virtue to eng
 <div style="margin-top:2em;">
 <div class="power-label">PLACES BY DEFAULT · VALUES OPT-IN</div>
 <div class="lang-rows">
-  <span class="lang">Java</span><span class="muted">records · <code>List.of</code></span>
+  <span class="lang">Java</span><span class="muted">records · <code>List.of</code> · JEP 401: Value Objects</span>
   <span class="lang">C#</span><span class="muted">records · <code>readonly</code></span>
   <span class="lang">TypeScript</span><span class="muted"><code>as const</code> · <code>Readonly&lt;T&gt;</code> · Immer</span>
   <span class="lang">Kotlin</span><span class="muted"><code>kotlinx.collections.immutable</code> — persistent collections, inspired by Clojure’s</span>
 </div>
 </div>
-
-<p class="muted" style="margin-top:2.2em;">All of it opt-in — the default is still a place.</p>
 
 <!--
 Generous framing, no dunking. Say out loud: Java and C# are genuinely moving this way (records, value classes on the roadmap), yet the DEFAULT is still places — values are something you opt into. Kotlin is the sharpest receipt: JetBrains officially ships kotlinx.collections.immutable — persistent collections with structural sharing, inspired by Clojure's design (newer CHAMP-based tries under the hood) — and still opt-in; the default List is a place. Beat into the next slide: "all your languages are adding this…"
@@ -583,19 +583,40 @@ SWITCH 1 → editor. This slide stays parked if anyone glances back at the proje
 
 ## Code is data
 
-```clojure
-(+ 1 2)
-```
+<div class="cols homoicon">
 
-<p style="margin-top:0.8em;">This is not text that <em>looks like</em> a list.<br>
-It <strong>is</strong> a list — first element <code>+</code>, then <code>1</code>, then <code>2</code>.</p>
+<div class="form-anat">
+  <span class="glyph paren">(</span>
+  <span class="glyph el">+</span>
+  <span class="glyph el">1</span>
+  <span class="glyph el">2</span>
+  <span class="glyph paren">)</span>
+  <span class="tick"></span>
+  <span class="tick">first</span>
+  <span class="tick">second</span>
+  <span class="tick">third</span>
+  <span class="tick"></span>
+</div>
 
-<p class="muted">There is no separate AST. The syntax tree <em>is</em> the syntax.<br>That property is called <strong>homoiconicity</strong> — let’s use it.</p>
+<div class="verdict">
+  <div>
+    <div class="power-label">WHAT THE COMPILER GETS</div>
+    <p class="verdict-word">A list</p>
+  </div>
+  <div>
+    <div class="power-label">NO SEPARATE AST</div>
+    <p class="verdict-word green">Homoiconicity</p>
+  </div>
+</div>
+
+</div>
 
 <span class="switch">→ to the REPL · session: macros</span>
 
 <!--
 SWITCH 2 → deck (this one slide, a breather after 25 min of demo), then SWITCH 3 → editor for workshop/macros.clj: first/eval, unless, build my->, macroexpand-1, (source ->). ~15–20 min.
+
+Say it, don’t read it: this is not text that LOOKS like a list — it IS a list, first element +, then 1, then 2. Nothing parses it into some other tree afterwards: the syntax tree is the syntax. That property has a name, homoiconicity — and it is the whole reason macros are ordinary code. Let’s use it.
 -->
 
 ---
@@ -695,8 +716,6 @@ Tie back to pains they have this week. If ahead of schedule: 60-second live atom
 </div>
 </div>
 
-<p v-click style="margin-top:2.2em;">No template language, no query builder, no routing DSL — <span class="green">vectors and maps</span>.<br>
-<span class="muted">So <code>assoc</code>, <code>map</code>, and <code>merge</code> already work on your routes, your pages, your queries.</span></p>
 
 <!--
 Echo of the thesis slide: language features are libraries, and libraries take data. Read the three columns as ONE story — a route table pointing at /users/:id, a page linking to /users/42, the query that fetches user 42. These are the ecosystem defaults, not fringe libraries. Verbal beats on the kicker: because it's data and not string concatenation, SQL injection and unescaped HTML are structurally off the table (honeysql emits parameterized queries, hiccup escapes by default); and "your routes are a value" means you can print them, diff them between deploys, test them with = — everything from the debugging column applies to your whole web stack. If asked how data becomes SQL/HTML: one function call — (sql/format ...), (html ...) — at the edge.
