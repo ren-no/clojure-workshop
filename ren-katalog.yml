@@ -6,5 +6,15 @@ metadata:
 spec:
   type: resource
   lifecycle: production
+  dependsOn:
+    - package:designsystem
 documentation:
-  root: docs/
+  root: ''
+serviceInfo:
+  technology:
+    languages:
+      - Clojure
+      - TypeScript
+      - Vue
+    infrastructure:
+      - Slidev
