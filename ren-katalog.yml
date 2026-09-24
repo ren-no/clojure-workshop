@@ -1,0 +1,20 @@
+yamlVersion: v1
+metadata:
+  name: clojure-workshop
+  title: Clojure Workshop
+  description: Presentasjon og kodeeksempler for en introduksjon til Clojure.
+spec:
+  type: resource
+  lifecycle: production
+  dependsOn:
+    - package:designsystem
+documentation:
+  root: ''
+serviceInfo:
+  technology:
+    languages:
+      - Clojure
+      - TypeScript
+      - Vue
+    infrastructure:
+      - Slidev
