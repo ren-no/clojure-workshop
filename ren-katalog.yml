@@ -1,0 +1,11 @@
+yamlVersion: v1
+metadata:
+  name: clojure-workshop
+  title: Clojure Workshop
+  description: Presentasjon og kodeeksempler for en introduksjon til Clojure.
+spec:
+  type: resource
+  lifecycle: production
+documentation:
+  root: docs/
+  technicalDocumentation: README.md
