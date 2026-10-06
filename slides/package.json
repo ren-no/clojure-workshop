@@ -12,7 +12,7 @@
     "@slidev/theme-default": "^0.25.0",
     "@slidev/types": "^52.19.0",
     "playwright-chromium": "^1.62.1",
-    "vue": "^3.5.40"
+    "vue": "^3.5.43"
   },
   "dependencies": {
     "@ren-no/design-system": "^3.21.1"
