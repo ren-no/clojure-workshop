@@ -5,7 +5,7 @@ metadata:
   description: Presentasjon og kodeeksempler for en introduksjon til Clojure.
 spec:
   type: resource
-  lifecycle: production
+  lifecycle: archived
   dependsOn:
     - package:designsystem
 documentation:
