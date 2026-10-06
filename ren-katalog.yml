@@ -6,10 +6,10 @@ metadata:
 spec:
   type: resource
   lifecycle: archived
-  dependsOn:
+  ownedBy:
+    - team:adt
+  usesPackage:
     - package:designsystem
-documentation:
-  root: ''
 serviceInfo:
   technology:
     languages:
